@@ -1,5 +1,7 @@
+import { HEIGHT } from "../utils.js";
+
 /**
- * This function wavelengthToRGB converts a given wavelength (in nanometers)
+ * This converts a given wavelength (in nanometers)
  * within the visible spectrum into an RGB color representation.
  */
 function wavelengthToRGB(wavelength) {
@@ -59,12 +61,15 @@ function wavelengthToRGB(wavelength) {
 function rgbToHex(r, g, b) {
 	const toHex = (value) => {
 		const hex = value.toString(16);
-		return `${hex}`.padStart(2, '0');
+		return `${hex}`.padStart(2, "0");
 	};
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-function generateGradientStops(frequencyRange = [4e14, 7.5e14], numStops = 256) {
+function generateGradientStops(
+	frequencyRange = [4e14, 7.5e14],
+	numStops = 256,
+) {
 	const C = 299_792_458; // Speed of light in m/s
 	const [f_min, f_max] = frequencyRange;
 	const gradientStops = [];
@@ -88,4 +93,40 @@ function generateGradientStops(frequencyRange = [4e14, 7.5e14], numStops = 256) 
 	return gradientStops;
 }
 
-export const visibleLightGradientStops = generateGradientStops()
+export const visibleLightGradientStops = generateGradientStops();
+
+const FREQUENCY_RANGE = [4e14, 7.5e14];
+
+export const visibleLightPlugin = (options) => {
+	const { group, defs } = options;
+
+	const gradient = defs
+		.append("linearGradient")
+		.attr("id", "visible-light-gradient")
+		.attr("gradientUnits", "userSpaceOnUse")
+		.attr("y1", 0)
+		.attr("y2", 0);
+
+	const band = group
+		.append("rect")
+		.attr("class", "em-visible-light")
+		.attr("y", 0)
+		.attr("height", HEIGHT)
+		.attr("fill", "url(#visible-light-gradient)");
+
+	for (const d of visibleLightGradientStops) {
+		gradient
+			.append("stop")
+			.attr("offset", d.offset)
+			.attr("stop-color", d.color);
+	}
+
+	const onUpdate = (xScale) => {
+		const xStart = xScale(Math.min(FREQUENCY_RANGE[0]));
+		const xEnd = xScale(FREQUENCY_RANGE[1]);
+		gradient.attr("x1", xStart).attr("x2", xEnd);
+		band.attr("x", xStart).attr("width", Math.max(0, xEnd - xStart));
+	};
+
+	return { onUpdate };
+};

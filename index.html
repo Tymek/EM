@@ -6,13 +6,17 @@
     <title>Electromagnetic Spectrum Map with Zoom and Pan (Frequency and Wavelength)</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
         .axis path,
         .axis line {
             stroke: #ccc;
         }
 
         .em-band {
-            cursor: pointer;
             opacity: 0.8;
         }
 
@@ -27,210 +31,7 @@
 
 <body>
     <svg id="canvas"></svg>
-
-    <script type="module">
-        import { visibleLightGradientStops } from './wavelength.js'
-
-        // Constants and dimensions
-        const MARGIN = { top: 50, right: 20, bottom: 50, left: 50 };
-        const WIDTH = window.innerWidth - MARGIN.left - MARGIN.right;
-        const HEIGHT = 200 - MARGIN.top - MARGIN.bottom;
-        const SPEED_OF_LIGHT = 299_792_458; // m/s
-
-        // Create SVG element
-        const svg = d3.select("#canvas")
-            .attr("width", WIDTH + MARGIN.left + MARGIN.right)
-            .attr("height", HEIGHT + MARGIN.top + MARGIN.bottom);
-
-        // Define the gradient for Visible Light
-        const defs = svg.append("defs");
-
-        const gradient = defs.append("linearGradient")
-            .attr("id", "visible-light-gradient")
-            // .attr("gradientUnits", "objectBoundingBox")
-            .attr("gradientUnits", "userSpaceOnUse")
-            .attr("y1", 0)
-            .attr("y2", 0);
-
-        visibleLightGradientStops.forEach(function (d) {
-            gradient.append("stop")
-                .attr("offset", d.offset)
-                .attr("stop-color", d.color);
-        });
-
-        // EM Spectrum data with frequency ranges in Hz
-        const emSpectrum = [
-            { name: "Radio Waves", frequencyRange: [3, 3e9], color: "#e6194b" },
-            { name: "Microwaves", frequencyRange: [3e9, 3e11], color: "#3cb44b" },
-            { name: "Infrared", frequencyRange: [3e11, 4e14], color: "#ffe119" },
-            { name: "Visible Light", frequencyRange: [4e14, 7.5e14], color: "#4363d8" },
-            { name: "Ultraviolet", frequencyRange: [7.5e14, 3e16], color: "#f58231" },
-            { name: "X-Rays", frequencyRange: [3e16, 3e19], color: "#911eb4" },
-            { name: "Gamma Rays", frequencyRange: [3e19, 3e24], color: "#46f0f0" }
-        ];
-
-        // Scales and axes
-        const xScaleFull = d3.scaleLog()
-            .domain([3, 3e24]) // Full frequency range
-            .range([MARGIN.left, WIDTH - MARGIN.right]);
-
-        const xScale = d3.scaleLog()
-            .domain([3, 3e24])
-            .range([MARGIN.left, WIDTH - MARGIN.right]);
-
-        // Wavelength scale (in meters)
-        const wavelengthScaleFull = d3.scaleLog()
-            .domain([SPEED_OF_LIGHT / 3e24, SPEED_OF_LIGHT / 3]) // Wavelength corresponding to frequency range
-            .range([MARGIN.left, WIDTH - MARGIN.right]);
-
-        const wavelengthScale = d3.scaleLog()
-            .domain([SPEED_OF_LIGHT / 3e24, SPEED_OF_LIGHT / 3])
-            .range([MARGIN.left, WIDTH - MARGIN.right]);
-
-        const xAxisFrequency = d3.axisBottom(xScale)
-            .ticks(5)
-            .tickSizeOuter(0)
-            .tickFormat(function (d) {
-                const format = d3.format(".1e");
-                return `${format(d)} Hz`;
-            });
-
-        const xAxisWavelength = d3.axisTop(wavelengthScale)
-            .ticks(5)
-            .tickSizeOuter(0)
-            .tickFormat(function (d) {
-                const format = d3.format(".1e");
-                return `${format(d)} m`;
-            });
-
-        // SVG and group setup
-        const g = svg.append("g")
-            .attr("transform", `translate(0, ${MARGIN.top})`);
-
-        // Functions to calculate positions and widths
-        function calculateBandX(d) {
-            const [freqStart, freqEnd] = d.frequencyRange;
-            const xStart = xScale(Math.max(freqStart, xScale.domain()[0]));
-            return xStart;
-        }
-
-        function calculateBandWidth(d) {
-            const [freqStart, freqEnd] = d.frequencyRange;
-            const xStart = xScale(Math.max(freqStart, xScale.domain()[0]));
-            const xEnd = xScale(Math.min(freqEnd, xScale.domain()[1]));
-            const width = xEnd - xStart;
-            return width > 0 ? width : 0;
-        }
-
-        function calculateLabelX(d) {
-            const [freqStart, freqEnd] = d.frequencyRange;
-            const xStart = xScale(Math.max(freqStart, xScale.domain()[0]));
-            const xEnd = xScale(Math.min(freqEnd, xScale.domain()[1]));
-            return (xStart + xEnd) / 2;
-        }
-
-        g.selectAll(".em-band")
-            .data(emSpectrum)
-            .enter()
-            .append("rect")
-            .attr("class", "em-band")
-            .attr("x", calculateBandX)
-            .attr("y", 0)
-            .attr("width", calculateBandWidth)
-            .attr("height", HEIGHT)
-            .attr("fill", d => {
-                if (d.name === "Visible Light") {
-                    return "url(#visible-light-gradient)";
-                } else {
-                    return d.color;
-                }
-            })
-            .append("title")
-            .text(d => d.name);
-
-        g.selectAll(".em-band-label")
-            .data(emSpectrum)
-            .enter()
-            .append("text")
-            .attr("class", "em-band-label")
-            .attr("x", calculateLabelX)
-            .attr("y", HEIGHT / 2)
-            .text(d => d.name);
-
-        // Add frequency axis at the bottom
-        g.append("g")
-            .attr("class", "axis x-axis-frequency")
-            .attr("transform", `translate(0, ${HEIGHT})`)
-            .call(xAxisFrequency);
-
-        // Add wavelength axis at the top
-        g.append("g")
-            .attr("class", "axis x-axis-wavelength")
-            .attr("transform", `translate(0, 0)`)
-            .call(xAxisWavelength);
-
-        // Zoom behavior
-        const zoom = d3.zoom()
-            .scaleExtent([1, 1_000_000])
-            .translateExtent([[xScaleFull.range()[0], 0], [xScaleFull.range()[1], 0]])
-            .extent([[MARGIN.left, 0], [WIDTH - MARGIN.right, HEIGHT]])
-            .on("zoom", zoomed);
-
-        svg.call(zoom);
-
-        function updateVisibleLightGradient(scale) {
-                const visibleLightBand = emSpectrum.find(d => d.name === "Visible Light");
-                const xStart = scale(Math.min(visibleLightBand.frequencyRange[0], scale.domain()[1]));
-                const xEnd = scale(Math.max(visibleLightBand.frequencyRange[1], scale.domain()[0]));
-                gradient
-                    .attr("x1", xStart)
-                    .attr("x2", xEnd);
-        }
-
-        function zoomed(event) {
-            requestAnimationFrame(() => {
-                const t = event.transform;
-                const newXScale = t.rescaleX(xScaleFull);
-                xScale.domain(newXScale.domain());
-
-                // Update the wavelength scale based on the new frequency domain
-                const freqDomain = xScale.domain();
-                const wavelengthDomain = [SPEED_OF_LIGHT / freqDomain[0], SPEED_OF_LIGHT / freqDomain[1]];
-                wavelengthScale.domain(wavelengthDomain);
-
-                g.selectAll(".em-band")
-                    .attr("x", calculateBandX)
-                    .attr("width", calculateBandWidth);
-                g.selectAll(".em-band-label")
-                    .attr("x", calculateLabelX);
-
-                // Update frequency axis
-                xAxisFrequency.scale(xScale);
-                xAxisFrequency
-                    .tickFormat(function (d) {
-                        const format = d3.format(`.${2 + Math.floor(Math.log10(t.k))}~s`);
-                        return `${format(d)}Hz`;
-                    });
-
-                g.select(".x-axis-frequency").call(xAxisFrequency);
-
-                // Update wavelength axis
-                xAxisWavelength.scale(wavelengthScale);
-                xAxisWavelength
-                    .ticks(5)
-                    .tickFormat(function (d) {
-                        const format = d3.format(`.${2 + Math.floor(Math.log10(t.k))}~s`);
-                        return `${format(d)}m`;
-                    });
-
-                g.select(".x-axis-wavelength").call(xAxisWavelength);
-
-                updateVisibleLightGradient(xScale)
-            });
-        }
-
-        updateVisibleLightGradient(xScale)
-    </script>
+    <script type="module" src="./main.js"></script>
 </body>
 
 </html>
