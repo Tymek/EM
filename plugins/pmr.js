@@ -92,10 +92,10 @@ export const pmrChannelsPlugin = (options) => {
 			.enter()
 			.append("line")
 			.attr("class", "pmr-channel-marker")
-			.attr("y1", HEIGHT / 2)
-			.attr("y2", HEIGHT)
-			.attr("stroke", "blue")
-			.attr("stroke-width", 1);
+			.attr("y1", HEIGHT - 3)
+			.attr("y2", HEIGHT + 20)
+			.attr("stroke", "darkblue")
+			.attr("stroke-width", 2);
 
 		markersEnter
 			.merge(markers)
@@ -112,16 +112,19 @@ export const pmrChannelsPlugin = (options) => {
 		const markerLabelsEnter = markerLabels
 			.enter()
 			.append("text")
+			.attr("y", HEIGHT + 35)
 			.attr("class", "pmr-channel-marker-label")
-			.attr("y", HEIGHT / 2 - 5)
-			.attr("text-anchor", "middle")
-			.attr("fill", "blue");
+			.attr("fill", "darkblue");
 
 		markerLabelsEnter
 			.merge(markerLabels)
 			.attr("x", (d) => xScale(d.center))
 			.style("font-size", "0.75em")
-			.text((d) => `${(d.center / 1e6).toFixed(3)} MHz`);
+			.attr("transform", (d) => {
+				const x = xScale(d.center);
+				return `rotate(45, ${x + 10}, ${HEIGHT + 30})`;
+			})
+			.text((d) => `${(d.center / 1e6).toFixed(5)} MHz`);
 
 		markerLabels.exit().remove();
 	};

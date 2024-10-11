@@ -3,10 +3,12 @@ import { emSpectrumBandsPlugin } from "./plugins/emSpectrumBands.js";
 import { wavelengthAxisPlugin } from "./plugins/wavelengthAxis.js";
 import { visibleLightPlugin } from "./plugins/visibleLight.js";
 import { pmrChannelsPlugin } from "./plugins/pmr.js";
+import { bandplanPlugin } from "./plugins/bandplan.js";
 import {
 	MARGIN,
 	WIDTH,
 	HEIGHT,
+	LEGEND_HEIGHT,
 	debounce,
 	getFrequenciesFromURL,
 	updateURLWithFrequencies,
@@ -15,7 +17,7 @@ import {
 const svg = d3
 	.select("#canvas")
 	.attr("width", WIDTH + MARGIN.left + MARGIN.right)
-	.attr("height", HEIGHT + MARGIN.top + MARGIN.bottom);
+	.attr("height", HEIGHT + MARGIN.top + MARGIN.bottom + LEGEND_HEIGHT);
 
 const defs = svg.append("defs");
 
@@ -38,11 +40,12 @@ const svgGroup = svg
 	.attr("transform", `translate(0, ${MARGIN.top})`);
 
 const plugins = [
-	frequencyAxisPlugin,
 	emSpectrumBandsPlugin,
+	frequencyAxisPlugin,
 	visibleLightPlugin,
 	wavelengthAxisPlugin,
 	pmrChannelsPlugin,
+	bandplanPlugin,
 ].map((plugin) => plugin({ group: svgGroup, defs }));
 
 function updatePlugins(scale, k) {

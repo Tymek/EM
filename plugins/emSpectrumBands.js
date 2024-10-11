@@ -41,7 +41,7 @@ export const emSpectrumBandsPlugin = (options) => {
 		group.selectAll(".em-band").remove();
 		group.selectAll(".em-band-label").remove();
 
-		if (k > 500) {
+		if (k > 4) {
 			return;
 		}
 

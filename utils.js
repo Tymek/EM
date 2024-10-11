@@ -1,6 +1,7 @@
 export const MARGIN = { top: 50, right: 12, bottom: 50, left: 12 };
 export const WIDTH = window.innerWidth - MARGIN.left - MARGIN.right;
 export const HEIGHT = 250 - MARGIN.top - MARGIN.bottom;
+export const LEGEND_HEIGHT = 200;
 export const SPEED_OF_LIGHT = 299_792_458; // m/s
 
 export function debounce(func, wait) {
