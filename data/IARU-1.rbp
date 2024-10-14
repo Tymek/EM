@@ -1,0 +1,53 @@
+amateur LF
+  band 135.7 kHz - 137.8 kHz
+  description LF amateur band
+  jurisdiction IARU-1
+  keywords CW, QRSS, LF
+
+  bandplan
+    135.7 kHz - 137.8 kHz
+      description CW, QRSS, narrow band digital modes
+      mode CW
+      max_bandwidth 200 Hz
+
+2m
+  band 144 MHz - 146 MHz
+  description 2m amateur band
+  jurisdiction IARU-1
+
+  bandplan - MHz, mode, max_bandwidth, description
+    144.000 - 144.025, ALL, 2700 #/ Satellite downlink only, Designers and operators of satellites using 144.0-144.025 MHz shall not transmit below 144.0025 MHz so that a necessary guard band is provided at the bottom band edge.
+    144.025 - 144.100, CW, 500, Telegraphy
+    144.100 - 144.150, CW/MGM, 500, CW and MGM EME
+    144.150 - 144.400, SSB/CW/MGM, 2700
+    144.400 - 144.490, MGM/CW, 500, Beacons exclusive 
+    144.491 - 144.493, MGM, 500, Personal weak signal MGM Beacons
+    144.500 - 144.794, ALL, 20k, Image mode (SSTV, FAX)
+    144.794 - 144.9625, MGM/DV, 12k, Digital communication
+    144.975 - 145.194, FM/DV, 12k, Repeater input exclusive
+    145.194 - 145.206, FM/DV, 12k, Space communication
+    145.206 - 145.5625, FM/DV, 12k, FM Internet voice gateway
+    145.575 - 145.7935, FM/DV, 12k, Repeater output exclusive
+    145.794 - 145.806, FM/DV, 12k, Space communication
+    145.806 - 146.000, ALL, 12k, Satellite exclusive
+
+  #// Notable frequencies
+  markers - MHz, description
+    144.050, Telegraphy calling
+    144.100, Random MS
+    144.195 - 144.205, Random MS SSB
+    144.300, SSB Centre of activity
+    144.489, WSPR
+    144.600, Data centre of activity (MGM, RTTY)
+    144.750, ATV talkback
+    144.800, APRS
+    144.8125, DV Internet voice gateway
+    144.8250, DV Internet voice gateway
+    144.8375, DV Internet voice gateway
+    144.8500, DV Internet voice gateway
+    144.8625, DV Internet voice gateway
+    145.2375, FM Internet voice gateway
+    145.2875, FM Internet voice gateway
+    145.3375, FM Internet voice gateway
+    145.375, Digital voice calling
+    145.500, FM calling

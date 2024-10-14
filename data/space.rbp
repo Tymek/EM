@@ -1,0 +1,32 @@
+
+ISS
+  description International Space Station
+
+  markers - MHz, mode, max_bandwidth, description, jurisdiction
+    145.800, FM, 12k, ISS Voice Downlink, IARU-1
+    144.490, FM, 12k, ISS Voice Uplink, IARU-1
+    145.825, FM, 12k, ISS APRS Packet System, Worldwide
+    145.200, FM, 12k, ISS Voice Uplink for ITU Region 1, IARU-1
+    437.800, FM, 12k, FM V/u with PL VOICE Repeater, Worldwide
+    145.990, FM, 12k, FM V/u Uplink with PL VOICE Repeater
+    437.550, FM, 12k, UHF Simplex\, rarely used, Worldwide
+
+  markers - MHz, description
+    145.800, FM SSTV downlink, generally PD120 mode
+    121.125, FM RS EVA from Orlan suit
+    121.750, FM Downlink from Soyuz-TM (voice), RS EVA from Orlan suit, Soyuz VHF-2, Progress Telemetry
+    130.167, AM VHF-2 Downlink from Zarya (Service Module), RS EVA to Orlan suits
+    143.625, FM VHF-1 downlink, Main Russian communications channel
+    166.000, AM Soyuz-TM and Progress M-1 telemetry
+    632.000 - 634.000, AM Zarya telemetry
+    628.000 - 630.000, AM Zvezda telemetry
+    922.76, CW Soyuz-TM and Progress M1 beacon
+    2265.0, Digital Telemetry Downlink
+    15003.4, Digital Data downlink
+
+SpaceX Dragon
+  markers - MHz, description
+    2216 MHz, SpaceX Dragon communications
+    2205.5 MHz, SpaceX Dragon communications
+    2231.5 MHz, SpaceX Dragon communications
+    400.5 MHz, SpaceX Dragon communications

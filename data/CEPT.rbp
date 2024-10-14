@@ -1,0 +1,27 @@
+PMR446
+  band 446 MHz - 446.2 MHz
+  description Private Mobile Radio
+  keywords PMR, walkie-talkie
+  mode NFM
+  jurisdiction CEPT
+  channels
+    1-16
+      center 446.00625 MHz
+      spacing 12.5 kHz
+    2
+      #/ Testy łączności awaryjnej
+      jurisdiction PL
+
+dPMR446
+  band 446 MHz - 446.2 MHz
+  description Private Mobile Radio
+  #/ 4-level FSK modulation at 3.6 kbit/s
+  keywords PMR, walkie-talkie
+  mode NFM
+  jurisdiction CEPT
+  channels
+    1-32
+      center 446.003125 MHz
+      spacing 6.25 kHz
+    19
+      #/ calling
