@@ -2,17 +2,21 @@ export const MARGIN = { top: 50, right: 12, bottom: 50, left: 12 };
 export const WIDTH = window.innerWidth - MARGIN.left - MARGIN.right;
 export const HEIGHT = 250 - MARGIN.top - MARGIN.bottom;
 export const LEGEND_HEIGHT = 200;
-export const SPEED_OF_LIGHT = 299_792_458; // m/s
+export const SPEED_OF_LIGHT = 299_792_458 as const; // m/s
 
-export function debounce(func, wait) {
-	let timeout;
-	return function (...args) {
+export function debounce<F extends (...args: Parameters<F>) => ReturnType<F>>(
+	func: F,
+	waitFor: number,
+): (...args: Parameters<F>) => void {
+	let timeout: ReturnType<typeof setTimeout>;
+
+	return (...args: Parameters<F>): void => {
 		clearTimeout(timeout);
-		timeout = setTimeout(() => func.apply(this, args), wait);
+		timeout = setTimeout(() => func(...args), waitFor);
 	};
 }
 
-function encodeFrequency(freq) {
+function encodeFrequency(freq: number): string {
 	const prefixes = [
 		{ value: 1e24, symbol: "Y" },
 		{ value: 1e21, symbol: "Z" },
@@ -22,7 +26,7 @@ function encodeFrequency(freq) {
 		{ value: 1e9, symbol: "G" },
 		{ value: 1e6, symbol: "M" },
 		{ value: 1e3, symbol: "k" },
-	];
+	] as const;
 	for (let i = 0; i < prefixes.length; i++) {
 		if (freq >= prefixes[i].value) {
 			const value = freq / prefixes[i].value;
@@ -33,8 +37,8 @@ function encodeFrequency(freq) {
 	return freq.toFixed(3);
 }
 
-function decodeFrequency(str) {
-	const prefixes = {
+function decodeFrequency(str: string): number {
+	const prefixes: { [key: string]: number } = {
 		Y: 1e24,
 		Z: 1e21,
 		E: 1e18,
@@ -45,16 +49,17 @@ function decodeFrequency(str) {
 		k: 1e3,
 		"": 1,
 	};
-	const match = str.match(/^([\d.]+)([a-zA-Z]*)$/);
-	if (match) {
-		const value = Number.parseFloat(match[1]);
-		const prefix = match[2];
-		const multiplier = prefixes[prefix];
-		if (multiplier !== undefined) {
-			return value * multiplier;
-		}
+
+	let i = 0;
+	while ((i < str.length && !Number.isNaN(Number(str[i]))) || str[i] === ".") {
+		i++;
 	}
-	return Number.NaN;
+
+	const value = Number.parseFloat(str.slice(0, i));
+	const prefix = str.slice(i);
+	const multiplier = prefixes[prefix] ?? Number.NaN;
+
+	return value * multiplier;
 }
 
 export function getFrequenciesFromURL() {
@@ -71,10 +76,17 @@ export function getFrequenciesFromURL() {
 	return null;
 }
 
-export function updateURLWithFrequencies([startFreq, endFreq]) {
+export function updateURLWithFrequencies([startFreq, endFreq]: number[]) {
 	const params = new URLSearchParams(window.location.search);
 	params.set("start", encodeFrequency(startFreq));
 	params.set("end", encodeFrequency(endFreq));
 	const newURL = `${window.location.pathname}?${params.toString()}`;
 	window.history.replaceState({}, "", newURL);
 }
+
+export type PluginType = (options: {
+	group: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>;
+	defs: d3.Selection<SVGDefsElement, unknown, HTMLElement, unknown>;
+}) => {
+	onUpdate: (xScale: d3.ScaleLogarithmic<number, number>, k: number) => void;
+};

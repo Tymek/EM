@@ -1,38 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Electromagnetic Spectrum Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        .axis path,
-        .axis line {
-            stroke: #ccc;
-        }
-
-        .em-band {
-            opacity: 0.8;
-        }
-
-        .em-band-label {
-            fill: black;
-            font-size: 12px;
-            text-anchor: middle;
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        }
-    </style>
 </head>
 
 <body>
     <svg id="canvas"></svg>
-    <script type="module" src="./main.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

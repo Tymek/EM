@@ -1,14 +1,14 @@
-import { HEIGHT } from "../utils.js";
+import { HEIGHT, type PluginType } from "../utils";
 
 /**
  * This converts a given wavelength (in nanometers)
  * within the visible spectrum into an RGB color representation.
  */
-function wavelengthToRGB(wavelength) {
-	let R;
-	let G;
-	let B;
-	let alpha;
+function wavelengthToRGB(wavelength: number) {
+	let R: number;
+	let G: number;
+	let B: number;
+	let alpha: number;
 
 	if (wavelength >= 380 && wavelength <= 440) {
 		R = (-1 * (wavelength - 440)) / (440 - 380);
@@ -58,8 +58,8 @@ function wavelengthToRGB(wavelength) {
 	return { r: R, g: G, b: B };
 }
 
-function rgbToHex(r, g, b) {
-	const toHex = (value) => {
+function rgbToHex(r: number, g: number, b: number) {
+	const toHex = (value: number) => {
 		const hex = value.toString(16);
 		return `${hex}`.padStart(2, "0");
 	};
@@ -97,7 +97,7 @@ export const visibleLightGradientStops = generateGradientStops();
 
 const FREQUENCY_RANGE = [4e14, 7.5e14];
 
-export const visibleLightPlugin = (options) => {
+export const visibleLightPlugin: PluginType = (options) => {
 	const { group, defs } = options;
 
 	const gradient = defs
@@ -121,7 +121,7 @@ export const visibleLightPlugin = (options) => {
 			.attr("stop-color", d.color);
 	}
 
-	const onUpdate = (xScale) => {
+	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>) => {
 		const xStart = xScale(Math.min(FREQUENCY_RANGE[0]));
 		const xEnd = xScale(FREQUENCY_RANGE[1]);
 		gradient.attr("x1", xStart).attr("x2", xEnd);

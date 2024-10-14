@@ -1,9 +1,11 @@
-import { frequencyAxisPlugin } from "./plugins/frequencyAxis.js";
-import { emSpectrumBandsPlugin } from "./plugins/emSpectrumBands.js";
-import { wavelengthAxisPlugin } from "./plugins/wavelengthAxis.js";
-import { visibleLightPlugin } from "./plugins/visibleLight.js";
-import { pmrChannelsPlugin } from "./plugins/pmr.js";
-import { bandplanPlugin } from "./plugins/bandplan.js";
+import "./style.css";
+import * as d3 from "d3";
+import { frequencyAxisPlugin } from "./plugins/frequencyAxis";
+import { emSpectrumBandsPlugin } from "./plugins/emSpectrumBands";
+import { wavelengthAxisPlugin } from "./plugins/wavelengthAxis";
+import { visibleLightPlugin } from "./plugins/visibleLight";
+import { pmrChannelsPlugin } from "./plugins/pmr";
+import { bandplanPlugin } from "./plugins/bandplan";
 import {
 	MARGIN,
 	WIDTH,
@@ -12,10 +14,11 @@ import {
 	debounce,
 	getFrequenciesFromURL,
 	updateURLWithFrequencies,
-} from "./utils.js";
+	type PluginType,
+} from "./utils";
 
-const svg = d3
-	.select("#canvas")
+const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, unknown> = d3
+	.select<SVGSVGElement, unknown>("#canvas")
 	.attr("width", WIDTH + MARGIN.left + MARGIN.right)
 	.attr("height", HEIGHT + MARGIN.top + MARGIN.bottom + LEGEND_HEIGHT);
 
@@ -37,7 +40,12 @@ const xScale = d3
 
 const svgGroup = svg
 	.append("g")
-	.attr("transform", `translate(0, ${MARGIN.top})`);
+	.attr("transform", `translate(0, ${MARGIN.top})`) as d3.Selection<
+	SVGGElement,
+	unknown,
+	HTMLElement,
+	unknown
+>;
 
 const plugins = [
 	emSpectrumBandsPlugin,
@@ -48,11 +56,11 @@ const plugins = [
 	bandplanPlugin,
 ].map((plugin) => plugin({ group: svgGroup, defs }));
 
-function updatePlugins(scale, k) {
+const updatePlugins: ReturnType<PluginType>["onUpdate"] = (scale, k) => {
 	for (const plugin of plugins) {
 		plugin.onUpdate(scale, k);
 	}
-}
+};
 
 // Compute initial transform based on initial frequencies
 const [startFreq, endFreq] = xScale.domain();
@@ -66,7 +74,7 @@ const tx = MARGIN.left - k * xStart;
 const initialTransform = d3.zoomIdentity.translate(tx, 0).scale(k);
 
 const zoom = d3
-	.zoom()
+	.zoom<SVGSVGElement, unknown>()
 	.scaleExtent([1, 1_000_000])
 	.translateExtent([
 		[xScaleFull.range()[0], 0],
@@ -81,7 +89,7 @@ const zoom = d3
 // Apply initial transform
 svg.call(zoom).call(zoom.transform, initialTransform);
 
-function zoomed(event) {
+function zoomed(event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
 	requestAnimationFrame(() => {
 		const t = event.transform;
 		const newXScale = t.rescaleX(xScaleFull);

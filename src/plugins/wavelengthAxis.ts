@@ -1,6 +1,7 @@
-import { MARGIN, WIDTH, SPEED_OF_LIGHT } from "../utils.js";
+import { MARGIN, WIDTH, SPEED_OF_LIGHT, type PluginType } from "../utils";
+import * as d3 from "d3";
 
-export const wavelengthAxisPlugin = (options) => {
+export const wavelengthAxisPlugin: PluginType = (options) => {
 	const { group } = options;
 
 	// Wavelength scale (in meters)
@@ -19,7 +20,7 @@ export const wavelengthAxisPlugin = (options) => {
 
 	axisGroup.call(axisGenerator);
 
-	const onUpdate = (xScale, k) => {
+	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>, k: number) => {
 		const freqDomain = xScale.domain();
 		const wavelengthDomain = [
 			SPEED_OF_LIGHT / freqDomain[0],

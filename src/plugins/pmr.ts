@@ -1,4 +1,4 @@
-import { HEIGHT } from "../utils.js";
+import { HEIGHT, type PluginType } from "../utils";
 
 // PMR Channels data (frequencies in Hz)
 const numChannels = 16;
@@ -13,14 +13,14 @@ const PMR_data = Array.from({ length: numChannels }, (_, i) => {
 	return { channel, center, width, color };
 });
 
-export const pmrChannelsPlugin = (options) => {
+export const pmrChannelsPlugin: PluginType = (options) => {
 	const { group: selection } = options;
 
 	const group = selection.append("g").attr("class", "pmr-channels");
 
-	const onUpdate = (xScale, k) => {
+	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>, k: number) => {
 		const visible = k >= 1000;
-		group.style("display", visible ? null : "none");
+		group.style("display", visible ? "block" : "none");
 
 		if (!visible) return;
 
@@ -33,7 +33,7 @@ export const pmrChannelsPlugin = (options) => {
 
 		// Draw channel rectangles
 		const channels = group
-			.selectAll(".pmr-channel")
+			.selectAll<SVGRectElement, (typeof channelsData)[number]>(".pmr-channel")
 			.data(channelsData, (d) => d.channel);
 
 		const channelsEnter = channels
@@ -61,7 +61,9 @@ export const pmrChannelsPlugin = (options) => {
 
 		// Draw channel labels
 		const labels = group
-			.selectAll(".pmr-channel-label")
+			.selectAll<SVGTextElement, (typeof channelsData)[number]>(
+				".pmr-channel-label",
+			)
 			.data(channelsData, (d) => d.channel);
 
 		const labelsEnter = labels
@@ -85,7 +87,9 @@ export const pmrChannelsPlugin = (options) => {
 
 		// Draw center frequency markers
 		const markers = group
-			.selectAll(".pmr-channel-marker")
+			.selectAll<SVGLineElement, (typeof channelsData)[number]>(
+				".pmr-channel-marker",
+			)
 			.data(channelsData, (d) => d.channel);
 
 		const markersEnter = markers
@@ -106,7 +110,9 @@ export const pmrChannelsPlugin = (options) => {
 
 		// Draw center frequency labels
 		const markerLabels = group
-			.selectAll(".pmr-channel-marker-label")
+			.selectAll<SVGTextElement, (typeof channelsData)[number]>(
+				".pmr-channel-marker-label",
+			)
 			.data(channelsData, (d) => d.channel);
 
 		const markerLabelsEnter = markerLabels

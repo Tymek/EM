@@ -1,7 +1,15 @@
-import { HEIGHT } from "../utils.js";
+import { HEIGHT, type PluginType } from "../utils";
 
-// IARU Region 1 Amateur Bandplan
-const IARU_band_data = [
+type BandData = {
+	band: string;
+	start: number;
+	end: number;
+	color: string;
+};
+
+type XScale = (value: number) => number;
+
+const IARU_band_data: BandData[] = [
 	{ band: "2200m", start: 135700, end: 137800, color: "#ffb3b3" },
 	{ band: "630m", start: 472000, end: 479000, color: "#ff9999" },
 	{ band: "160m", start: 1810000, end: 2000000, color: "#ffcccc" },
@@ -15,6 +23,7 @@ const IARU_band_data = [
 	{ band: "12m", start: 24890000, end: 24990000, color: "#e60000" },
 	{ band: "10m", start: 28000000, end: 29700000, color: "#cc0000" },
 	{ band: "6m", start: 50000000, end: 52000000, color: "#990000" },
+	{ band: "4m", start: 70000000, end: 70500000, color: "#800000" },
 	{ band: "2m", start: 144000000, end: 146000000, color: "#660000" },
 	{ band: "70cm", start: 430000000, end: 440000000, color: "#330000" },
 	{ band: "23cm", start: 1240000000, end: 1300000000, color: "#000033" },
@@ -29,15 +38,22 @@ const IARU_band_data = [
 	{ band: "<2mm", start: 241000000000, end: 250000000000, color: "#ccffff" },
 ];
 
-export const bandplanPlugin = (options) => {
+export const bandplanPlugin: PluginType = (options) => {
 	const { group: selection } = options;
 
 	const group = selection.append("g").attr("class", "iaru-bands");
 
-	const drawMarkers = (selection, className, y1, y2, color, xFunc) => {
+	const drawMarkers = (
+		selection: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+		className: string,
+		y1: number,
+		y2: number,
+		color: string,
+		xFunc: (d: BandData) => number,
+	) => {
 		const markers = selection
-			.selectAll(`.${className}`)
-			.data(IARU_band_data, (d) => d.band);
+			.selectAll<SVGLineElement, BandData>(`.${className}`)
+			.data(IARU_band_data, (d: BandData) => d.band);
 
 		const markersEnter = markers
 			.enter()
@@ -54,16 +70,16 @@ export const bandplanPlugin = (options) => {
 	};
 
 	const drawLabels = (
-		selection,
-		className,
-		y,
-		fill,
-		xFunc,
-		textFunc,
+		selection: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+		className: string,
+		y: number,
+		fill: string,
+		xFunc: (d: BandData) => number,
+		textFunc: (d: BandData) => string,
 		rotate = false,
 	) => {
 		const labels = selection
-			.selectAll(`.${className}`)
+			.selectAll<SVGTextElement, BandData>(`.${className}`)
 			.data(IARU_band_data, (d) => d.band);
 
 		const labelsEnter = labels
@@ -90,16 +106,15 @@ export const bandplanPlugin = (options) => {
 		labels.exit().remove();
 	};
 
-	const onUpdate = (xScale, k) => {
+	const onUpdate = (xScale: XScale, k: number) => {
 		const visible = k >= 3;
-		group.style("display", visible ? null : "none");
+		group.style("display", visible ? "block" : "none");
 
 		if (!visible) return;
 
-		// Draw band rectangles
 		const bands = group
-			.selectAll(".iaru-band")
-			.data(IARU_band_data, (d) => d.band);
+			.selectAll<SVGRectElement, BandData>(".iaru-band")
+			.data(IARU_band_data, (d: BandData) => d.band);
 
 		const bandsEnter = bands
 			.enter()
@@ -121,7 +136,6 @@ export const bandplanPlugin = (options) => {
 
 		bands.exit().remove();
 
-		// Draw band labels
 		drawLabels(
 			group,
 			"iaru-band-label",
@@ -132,7 +146,6 @@ export const bandplanPlugin = (options) => {
 		);
 
 		if (k >= 50) {
-			// Draw start frequency markers
 			drawMarkers(
 				group,
 				"iaru-band-marker-start",
@@ -142,7 +155,6 @@ export const bandplanPlugin = (options) => {
 				(d) => xScale(d.start),
 			);
 
-			// Draw end frequency markers
 			drawMarkers(
 				group,
 				"iaru-band-marker-end",
@@ -152,7 +164,6 @@ export const bandplanPlugin = (options) => {
 				(d) => xScale(d.end),
 			);
 
-			// Draw start frequency labels
 			drawLabels(
 				group,
 				"iaru-band-marker-label-start",
@@ -163,7 +174,6 @@ export const bandplanPlugin = (options) => {
 				true,
 			);
 
-			// Draw end frequency labels
 			drawLabels(
 				group,
 				"iaru-band-marker-label-end",

@@ -1,6 +1,6 @@
-import { MARGIN, WIDTH, HEIGHT } from "../utils.js";
+import { HEIGHT, type PluginType } from "../utils";
 
-export const emSpectrumBandsPlugin = (options) => {
+export const emSpectrumBandsPlugin: PluginType = (options) => {
 	const { group } = options;
 
 	const emSpectrum = [
@@ -17,13 +17,15 @@ export const emSpectrumBandsPlugin = (options) => {
 		{ name: "Gamma Rays", frequencyRange: [3e19, 3e24], color: "#46f0f0" },
 	];
 
-	const onUpdate = (xScale, k) => {
-		const calculateBandX = (d) => {
+	type EMData = (typeof emSpectrum)[number];
+
+	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>, k: number) => {
+		const calculateBandX = (d: EMData) => {
 			const [freqStart] = d.frequencyRange;
 			return xScale(Math.max(freqStart, xScale.domain()[0]));
 		};
 
-		const calculateBandWidth = (d) => {
+		const calculateBandWidth = (d: EMData) => {
 			const [freqStart, freqEnd] = d.frequencyRange;
 			const xStart = xScale(Math.max(freqStart, xScale.domain()[0]));
 			const xEnd = xScale(Math.min(freqEnd, xScale.domain()[1]));
@@ -31,7 +33,7 @@ export const emSpectrumBandsPlugin = (options) => {
 			return width > 0 ? width : 0;
 		};
 
-		const calculateLabelX = (d) => {
+		const calculateLabelX = (d: EMData) => {
 			const [freqStart, freqEnd] = d.frequencyRange;
 			const xStart = xScale(Math.max(freqStart, xScale.domain()[0]));
 			const xEnd = xScale(Math.min(freqEnd, xScale.domain()[1]));
