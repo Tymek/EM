@@ -4,18 +4,23 @@
 <head>
     <meta charset="UTF-8" />
     <title>Electromagnetic Spectrum Map</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="true" />
     <link rel="stylesheet" href="/src/style.css" />
+    <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline';">
 </head>
 
 <body>
     <svg id="canvas"></svg>
+    <aside id="controls"></aside>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
         integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer type="module" src="/src/main.js"></script>
 
     <footer>
+        Scroll or pinch to zoom, drag to pan.<br />
         &copy; SP5CMD,
         <a href="https://github.com/tymek/em">
             <img src="/src/icons/github.svg" alt="GitHub" /> github.com/Tymek/EM

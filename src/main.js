@@ -14,6 +14,7 @@ import {
 	debounce,
 	getFrequenciesFromURL,
 	updateURLWithFrequencies,
+	loadComponent,
 } from "./utils.js";
 
 const { d3 } = window;
@@ -25,9 +26,7 @@ const { d3 } = window;
  */
 const svg = d3.select("#canvas");
 
-svg
-	.attr("width", WIDTH + MARGIN.left + MARGIN.right)
-	.attr("height", HEIGHT + MARGIN.top + MARGIN.bottom + LEGEND_HEIGHT);
+svg.attr("min-height", HEIGHT + MARGIN.top + MARGIN.bottom + LEGEND_HEIGHT);
 
 const defs = svg.append("defs");
 
@@ -109,31 +108,23 @@ svg.call(zoom).call(zoom.transform, initialTransform);
  * @param {d3.D3ZoomEvent<SVGSVGElement, unknown>} event - The zoom event object.
  */
 function zoomed(event) {
-	requestAnimationFrame(() => {
-		const t = event.transform;
-		const newXScale = t.rescaleX(xScaleFull);
-		xScale.domain(newXScale.domain());
+	// requestAnimationFrame(() => {
+	const t = event.transform;
+	const newXScale = t.rescaleX(xScaleFull);
+	xScale.domain(newXScale.domain());
 
-		updatePlugins(xScale, t.k);
+	updatePlugins(xScale, t.k);
 
-		debouncedUpdateURLWithFrequencies(xScale.domain());
-	});
+	debouncedUpdateURLWithFrequencies(xScale.domain());
+	// });
 }
-
-// Update plugins with the initial scale
-// updatePlugins(xScale, 1);
 
 // Debounced function to update URL with new frequencies
 const debouncedUpdateURLWithFrequencies = debounce(
 	(newScale) => updateURLWithFrequencies(newScale, DOMAIN),
-	500,
+	1_000,
 );
 
-function fetchComponent(url, containerSelector) {
-	fetch(url)
-		.then((response) => response.text())
-		.then((data) => {
-			document.querySelector(containerSelector).innerHTML = data;
-		})
-		.catch((error) => console.error(`Error fetching ${url}:`, error));
-}
+loadComponent("/src/components/fullscreen.html").then((data) => {
+	document.querySelector("#controls")?.appendChild(data);
+});

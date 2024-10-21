@@ -1,0 +1,27 @@
+<button id="fullscreen">
+    <img src="/src/icons/maximize.svg" alt="Fullscreen" />
+</button>
+<script>
+    const button = document.querySelector("#fullscreen");
+    const img = button?.querySelector("img");
+
+
+    const updateFullscreen = () => {
+        if (document.fullscreenElement) {
+            img?.setAttribute("src", "/src/icons/minimize.svg");
+        } else {
+            img?.setAttribute("src", "/src/icons/maximize.svg");
+        }
+    };
+
+    setInterval(updateFullscreen, 1000);
+
+    button?.addEventListener("click", () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            document.documentElement.requestFullscreen();
+        }
+        updateFullscreen();
+    });
+</script>

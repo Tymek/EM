@@ -13,9 +13,32 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+    position: relative;
+    height: 100%;
+    touch-action: none;
+    /* touch-action: pan-x pan-y; */
+}
+
 body {
     margin: 0;
     padding: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#canvas {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
 }
 
 .axis path,

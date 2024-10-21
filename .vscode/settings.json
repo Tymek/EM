@@ -7,4 +7,5 @@
 		"quickfix.biome": "explicit"
 	},
 	"js/ts.implicitProjectConfig.checkJs": true,
+	"javascript.preferences.importModuleSpecifier": "project-relative"
 }

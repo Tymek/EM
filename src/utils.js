@@ -1,5 +1,5 @@
 /** @const @type {{top: number, right: number, bottom: number, left: number}} */
-export const MARGIN = { top: 50, right: 12, bottom: 50, left: 12 };
+export const MARGIN = { top: 50, right: 0, bottom: 50, left: 0 };
 /** @const @type {number} */
 export const WIDTH = window.innerWidth - MARGIN.left - MARGIN.right;
 /** @const @type {number} */
@@ -8,6 +8,12 @@ export const HEIGHT = 250 - MARGIN.top - MARGIN.bottom;
 export const LEGEND_HEIGHT = 200;
 /** @const @type {299792458} */
 export const SPEED_OF_LIGHT = 299_792_458; // m/s
+
+/**
+ * @typedef {function(Object): { onUpdate: function(d3.ScaleLogarithmic, number): void }} PluginType
+ * @property {d3.Selection<SVGGElement, unknown, HTMLElement, unknown>} options.group - Group selection.
+ * @property {d3.Selection<SVGDefsElement, unknown, HTMLElement, unknown>} options.defs - Defs selection.
+ */
 
 /**
  * @template {Function} F
@@ -111,7 +117,15 @@ export function updateURLWithFrequencies([start, end], [min, max]) {
 }
 
 /**
- * @typedef {function(Object): { onUpdate: function(d3.ScaleLogarithmic, number): void }} PluginType
- * @property {d3.Selection<SVGGElement, unknown, HTMLElement, unknown>} options.group - Group selection.
- * @property {d3.Selection<SVGDefsElement, unknown, HTMLElement, unknown>} options.defs - Defs selection.
+ * Loads an HTML component from a specified URL and processes it.
+ *
+ * @param {string} url - The URL of the component to load, relative to the /src/components/ directory.
  */
+export const loadComponent = (url) =>
+	fetch(url)
+		.then((response) => response.text())
+		.then((data) => {
+			const range = document.createRange();
+			const fragment = range.createContextualFragment(data);
+			return fragment;
+		});
