@@ -1,14 +1,17 @@
-import { HEIGHT, type PluginType } from "../utils";
+import { HEIGHT } from "../utils.js";
 
 /**
  * This converts a given wavelength (in nanometers)
  * within the visible spectrum into an RGB color representation.
+ *
+ * @param {number} wavelength - The wavelength in nanometers.
+ * @returns {{r: number, g: number, b: number}} The RGB color representation.
  */
-function wavelengthToRGB(wavelength: number) {
-	let R: number;
-	let G: number;
-	let B: number;
-	let alpha: number;
+function wavelengthToRGB(wavelength) {
+	let R;
+	let G;
+	let B;
+	let alpha;
 
 	if (wavelength >= 380 && wavelength <= 440) {
 		R = (-1 * (wavelength - 440)) / (440 - 380);
@@ -58,14 +61,29 @@ function wavelengthToRGB(wavelength: number) {
 	return { r: R, g: G, b: B };
 }
 
-function rgbToHex(r: number, g: number, b: number) {
-	const toHex = (value: number) => {
+/**
+ * Converts RGB values to a hexadecimal color string.
+ *
+ * @param {number} r - The red component (0-255).
+ * @param {number} g - The green component (0-255).
+ * @param {number} b - The blue component (0-255).
+ * @returns {string} The hexadecimal color string.
+ */
+function rgbToHex(r, g, b) {
+	const toHex = (value) => {
 		const hex = value.toString(16);
 		return `${hex}`.padStart(2, "0");
 	};
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+/**
+ * Generates gradient stops for a given frequency range.
+ *
+ * @param {Array<number>} [frequencyRange=[4e14, 7.5e14]] - The frequency range in Hz.
+ * @param {number} [numStops=256] - The number of gradient stops.
+ * @returns {Array<{offset: string, color: string}>} The gradient stops with offset and color.
+ */
 function generateGradientStops(
 	frequencyRange = [4e14, 7.5e14],
 	numStops = 256,
@@ -81,7 +99,6 @@ function generateGradientStops(
 		const wavelength_nm = wavelength_m * 1e9; // Convert meters to nanometers
 
 		const { r, g, b } = wavelengthToRGB(wavelength_nm);
-
 		const hexColor = rgbToHex(r, g, b);
 
 		gradientStops.push({
@@ -95,9 +112,13 @@ function generateGradientStops(
 
 export const visibleLightGradientStops = generateGradientStops();
 
+/** @constant {[number, number]} */
 const FREQUENCY_RANGE = [4e14, 7.5e14];
 
-export const visibleLightPlugin: PluginType = (options) => {
+/**
+ * @type {import("../utils").PluginType}
+ */
+export const visibleLightPlugin = (options) => {
 	const { group, defs } = options;
 
 	const gradient = defs
@@ -121,7 +142,12 @@ export const visibleLightPlugin: PluginType = (options) => {
 			.attr("stop-color", d.color);
 	}
 
-	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>) => {
+	/**
+	 * Updates the gradient and band based on the given x-scale.
+	 *
+	 * @param {d3.ScaleLogarithmic<number, number>} xScale - The logarithmic scale for the x-axis.
+	 */
+	const onUpdate = (xScale) => {
 		const xStart = xScale(Math.min(FREQUENCY_RANGE[0]));
 		const xEnd = xScale(FREQUENCY_RANGE[1]);
 		gradient.attr("x1", xStart).attr("x2", xEnd);

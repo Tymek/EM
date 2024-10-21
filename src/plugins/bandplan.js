@@ -1,15 +1,19 @@
-import { HEIGHT, type PluginType } from "../utils";
+import { HEIGHT } from "../utils.js";
 
-type BandData = {
-	band: string;
-	start: number;
-	end: number;
-	color: string;
-};
+/**
+ * @typedef {Object} BandData
+ * @property {string} band
+ * @property {number} start
+ * @property {number} end
+ * @property {string} color
+ */
 
-type XScale = (value: number) => number;
+/**
+ * @typedef {(value: number) => number} XScale
+ */
 
-const IARU_band_data: BandData[] = [
+/** @type {Array<BandData>} */
+const IARU_band_data = [
 	{ band: "2200m", start: 135700, end: 137800, color: "#ffb3b3" },
 	{ band: "630m", start: 472000, end: 479000, color: "#ff9999" },
 	{ band: "160m", start: 1810000, end: 2000000, color: "#ffcccc" },
@@ -38,22 +42,28 @@ const IARU_band_data: BandData[] = [
 	{ band: "<2mm", start: 241000000000, end: 250000000000, color: "#ccffff" },
 ];
 
-export const bandplanPlugin: PluginType = (options) => {
+/**
+ * @type {import("../utils").PluginType}
+ */
+export const bandplanPlugin = (options) => {
 	const { group: selection } = options;
 
 	const group = selection.append("g").attr("class", "iaru-bands");
 
-	const drawMarkers = (
-		selection: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
-		className: string,
-		y1: number,
-		y2: number,
-		color: string,
-		xFunc: (d: BandData) => number,
-	) => {
-		const markers = selection
-			.selectAll<SVGLineElement, BandData>(`.${className}`)
-			.data(IARU_band_data, (d: BandData) => d.band);
+	/**
+	 * Draws markers on the chart.
+	 * @param {d3.Selection} selection
+	 * @param {string} className
+	 * @param {number} y1
+	 * @param {number} y2
+	 * @param {string} color
+	 * @param {(d: BandData) => number} xFunc
+	 */
+	const drawMarkers = (selection, className, y1, y2, color, xFunc) => {
+		/** @type {d3.Selection<SVGLineElement, BandData, SVGGElement, unknown>} */
+		const markers = /** @type {any} */ (
+			selection.selectAll(`.${className}`).data(IARU_band_data, (d) => d.band)
+		);
 
 		const markersEnter = markers
 			.enter()
@@ -69,18 +79,29 @@ export const bandplanPlugin: PluginType = (options) => {
 		markers.exit().remove();
 	};
 
+	/**
+	 * Draws labels on the chart.
+	 * @param {d3.Selection<SVGGElement, unknown, HTMLElement, unknown>} selection
+	 * @param {string} className
+	 * @param {number} y
+	 * @param {string} fill
+	 * @param {(d: BandData) => number} xFunc
+	 * @param {(d: BandData) => string} textFunc
+	 * @param {boolean} [rotate=false]
+	 */
 	const drawLabels = (
-		selection: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
-		className: string,
-		y: number,
-		fill: string,
-		xFunc: (d: BandData) => number,
-		textFunc: (d: BandData) => string,
+		selection,
+		className,
+		y,
+		fill,
+		xFunc,
+		textFunc,
 		rotate = false,
 	) => {
-		const labels = selection
-			.selectAll<SVGTextElement, BandData>(`.${className}`)
-			.data(IARU_band_data, (d) => d.band);
+		/** @type {d3.Selection<SVGTextElement, BandData, SVGGElement, unknown>} */
+		const labels = /** @type {any} */ (
+			selection.selectAll(`.${className}`).data(IARU_band_data, (d) => d.band)
+		);
 
 		const labelsEnter = labels
 			.enter()
@@ -106,15 +127,21 @@ export const bandplanPlugin: PluginType = (options) => {
 		labels.exit().remove();
 	};
 
-	const onUpdate = (xScale: XScale, k: number) => {
+	/**
+	 * Updates the chart with new scaling and zoom level.
+	 * @param {XScale} xScale
+	 * @param {number} k
+	 */
+	const onUpdate = (xScale, k) => {
 		const visible = k >= 3;
 		group.style("display", visible ? "block" : "none");
 
 		if (!visible) return;
 
-		const bands = group
-			.selectAll<SVGRectElement, BandData>(".iaru-band")
-			.data(IARU_band_data, (d: BandData) => d.band);
+		/** @type {d3.Selection<SVGRectElement, BandData, SVGGElement, unknown>} */
+		const bands = /** @type {any} */ (
+			group.selectAll(".iaru-band").data(IARU_band_data, (d) => d.band)
+		);
 
 		const bandsEnter = bands
 			.enter()

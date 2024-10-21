@@ -1,11 +1,21 @@
-import { HEIGHT, type PluginType } from "../utils";
+import { HEIGHT } from "../utils.js";
 
-// PMR Channels data (frequencies in Hz)
+/** @constant {number} */
 const numChannels = 16;
+
+/** @constant {number} */
 const firstChannelCenter = 446.00625e6; // Hz
+
+/** @constant {number} */
 const width = 12.5e3; // Hz
+
+/** @constant {number} */
 const spacing = 12.5e3; // Hz
 
+/**
+ * Array of PMR channel data objects
+ * @constant {Array<{channel: number, center: number, width: number, color: string}>}
+ */
 const PMR_data = Array.from({ length: numChannels }, (_, i) => {
 	const channel = i + 1;
 	const center = firstChannelCenter + i * spacing;
@@ -13,12 +23,20 @@ const PMR_data = Array.from({ length: numChannels }, (_, i) => {
 	return { channel, center, width, color };
 });
 
-export const pmrChannelsPlugin: PluginType = (options) => {
+/**
+ * @type {import("../utils").PluginType}
+ */
+export const pmrChannelsPlugin = (options) => {
 	const { group: selection } = options;
 
 	const group = selection.append("g").attr("class", "pmr-channels");
 
-	const onUpdate = (xScale: d3.ScaleLogarithmic<number, number>, k: number) => {
+	/**
+	 * Updates the PMR channels visualization
+	 * @param {d3.ScaleLogarithmic<number, number>} xScale - D3 logarithmic scale for x-axis
+	 * @param {number} k - Zoom scale factor
+	 */
+	const onUpdate = (xScale, k) => {
 		const visible = k >= 1000;
 		group.style("display", visible ? "block" : "none");
 
@@ -33,7 +51,7 @@ export const pmrChannelsPlugin: PluginType = (options) => {
 
 		// Draw channel rectangles
 		const channels = group
-			.selectAll<SVGRectElement, (typeof channelsData)[number]>(".pmr-channel")
+			.selectAll(".pmr-channel")
 			.data(channelsData, (d) => d.channel);
 
 		const channelsEnter = channels
@@ -61,9 +79,7 @@ export const pmrChannelsPlugin: PluginType = (options) => {
 
 		// Draw channel labels
 		const labels = group
-			.selectAll<SVGTextElement, (typeof channelsData)[number]>(
-				".pmr-channel-label",
-			)
+			.selectAll(".pmr-channel-label")
 			.data(channelsData, (d) => d.channel);
 
 		const labelsEnter = labels
@@ -87,9 +103,7 @@ export const pmrChannelsPlugin: PluginType = (options) => {
 
 		// Draw center frequency markers
 		const markers = group
-			.selectAll<SVGLineElement, (typeof channelsData)[number]>(
-				".pmr-channel-marker",
-			)
+			.selectAll(".pmr-channel-marker")
 			.data(channelsData, (d) => d.channel);
 
 		const markersEnter = markers
@@ -110,9 +124,7 @@ export const pmrChannelsPlugin: PluginType = (options) => {
 
 		// Draw center frequency labels
 		const markerLabels = group
-			.selectAll<SVGTextElement, (typeof channelsData)[number]>(
-				".pmr-channel-marker-label",
-			)
+			.selectAll(".pmr-channel-marker-label")
 			.data(channelsData, (d) => d.channel);
 
 		const markerLabelsEnter = markerLabels

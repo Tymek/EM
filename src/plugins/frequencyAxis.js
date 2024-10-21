@@ -1,7 +1,11 @@
-import { MARGIN, WIDTH, HEIGHT, type PluginType } from "../utils";
-import * as d3 from "d3";
+import { MARGIN, WIDTH, HEIGHT } from "../utils.js";
 
-export const frequencyAxisPlugin: PluginType = (options) => {
+const { d3 } = window;
+
+/**
+ * @type {import("../utils").PluginType}
+ */
+export const frequencyAxisPlugin = (options) => {
 	const { group } = options;
 
 	const xScale = d3
@@ -22,10 +26,13 @@ export const frequencyAxisPlugin: PluginType = (options) => {
 
 	axisGroup.call(axisGenerator);
 
-	const onUpdate = (
-		newScale: d3.ScaleLogarithmic<number, number>,
-		k: number,
-	) => {
+	/**
+	 * Updates the axis with new scale and formatting.
+	 *
+	 * @param {d3.ScaleLogarithmic<number, number>} newScale - New logarithmic scale for the axis.
+	 * @param {number} k - Scaling factor used for tick formatting.
+	 */
+	const onUpdate = (newScale, k) => {
 		axisGenerator.scale(newScale);
 		axisGenerator.tickFormat((d) => {
 			const format = d3.format(`.${2 + Math.floor(Math.log10(k))}~s`);
