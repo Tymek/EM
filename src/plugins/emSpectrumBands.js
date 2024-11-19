@@ -1,4 +1,4 @@
-import { HEIGHT } from "../utils.js";
+import { getDimensions } from "../utils.js";
 
 /**
  * @type {import("../utils").PluginType}
@@ -73,6 +73,8 @@ export const emSpectrumBandsPlugin = (options) => {
 			return;
 		}
 
+		const { height } = getDimensions();
+
 		group
 			.selectAll(".em-band")
 			.data(emSpectrum)
@@ -82,7 +84,7 @@ export const emSpectrumBandsPlugin = (options) => {
 			.attr("x", calculateBandX)
 			.attr("y", 0)
 			.attr("width", calculateBandWidth)
-			.attr("height", HEIGHT)
+			.attr("height", height)
 			.attr("fill", (d) => d.color)
 			.append("title")
 			.text((d) => d.name);
@@ -95,7 +97,7 @@ export const emSpectrumBandsPlugin = (options) => {
 			.append("text")
 			.attr("class", "em-band-label")
 			.attr("x", calculateLabelX)
-			.attr("y", HEIGHT / 2)
+			.attr("y", height / 2)
 			.text((d) => d.name);
 	};
 

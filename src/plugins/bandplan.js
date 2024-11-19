@@ -1,4 +1,4 @@
-import { HEIGHT } from "../utils.js";
+import { getDimensions } from "../utils.js";
 
 /**
  * @typedef {Object} BandData
@@ -143,12 +143,14 @@ export const bandplanPlugin = (options) => {
 			group.selectAll(".iaru-band").data(IARU_band_data, (d) => d.band)
 		);
 
+		const { height } = getDimensions();
+
 		const bandsEnter = bands
 			.enter()
 			.append("rect")
 			.attr("class", "iaru-band")
-			.attr("y", HEIGHT / 2)
-			.attr("height", HEIGHT / 2)
+			.attr("y", height / 2)
+			.attr("height", height / 2)
 			.attr("fill", (d) => d.color);
 
 		bandsEnter
@@ -166,7 +168,7 @@ export const bandplanPlugin = (options) => {
 		drawLabels(
 			group,
 			"iaru-band-label",
-			HEIGHT / 2 - 20,
+			height / 2 - 20,
 			"black",
 			(d) => (xScale(d.start) + xScale(d.end)) / 2,
 			(d) => `${d.band}\nband`,
@@ -176,8 +178,8 @@ export const bandplanPlugin = (options) => {
 			drawMarkers(
 				group,
 				"iaru-band-marker-start",
-				HEIGHT - 3,
-				HEIGHT + 20,
+				height - 3,
+				height + 20,
 				"darkblue",
 				(d) => xScale(d.start),
 			);
@@ -185,8 +187,8 @@ export const bandplanPlugin = (options) => {
 			drawMarkers(
 				group,
 				"iaru-band-marker-end",
-				HEIGHT - 3,
-				HEIGHT + 20,
+				height - 3,
+				height + 20,
 				"darkblue",
 				(d) => xScale(d.end),
 			);
@@ -194,7 +196,7 @@ export const bandplanPlugin = (options) => {
 			drawLabels(
 				group,
 				"iaru-band-marker-label-start",
-				HEIGHT + 35,
+				height + 35,
 				"darkblue",
 				(d) => xScale(d.start),
 				(d) => `${(d.start / 1e6).toFixed(3)} MHz`,
@@ -204,7 +206,7 @@ export const bandplanPlugin = (options) => {
 			drawLabels(
 				group,
 				"iaru-band-marker-label-end",
-				HEIGHT + 35,
+				height + 35,
 				"darkblue",
 				(d) => xScale(d.end),
 				(d) => `${(d.end / 1e6).toFixed(3)} MHz`,

@@ -1,4 +1,4 @@
-import { HEIGHT } from "../utils.js";
+import { getDimensions } from "../utils.js";
 
 /** @constant {number} */
 const numChannels = 16;
@@ -29,6 +29,8 @@ const PMR_data = Array.from({ length: numChannels }, (_, i) => {
 export const pmrChannelsPlugin = (options) => {
 	const { group: selection } = options;
 
+	const { height } = getDimensions();
+
 	const group = selection.append("g").attr("class", "pmr-channels");
 
 	/**
@@ -58,8 +60,8 @@ export const pmrChannelsPlugin = (options) => {
 			.enter()
 			.append("rect")
 			.attr("class", "pmr-channel")
-			.attr("y", HEIGHT / 2)
-			.attr("height", HEIGHT / 2)
+			.attr("y", height / 2)
+			.attr("height", height / 2)
 			.attr("fill", (d) => d.color);
 
 		channelsEnter
@@ -86,7 +88,7 @@ export const pmrChannelsPlugin = (options) => {
 			.enter()
 			.append("text")
 			.attr("class", "pmr-channel-label")
-			.attr("y", HEIGHT - 20)
+			.attr("y", height - 20)
 			.attr("text-anchor", "middle")
 			.attr("fill", "black");
 
@@ -110,8 +112,8 @@ export const pmrChannelsPlugin = (options) => {
 			.enter()
 			.append("line")
 			.attr("class", "pmr-channel-marker")
-			.attr("y1", HEIGHT - 3)
-			.attr("y2", HEIGHT + 20)
+			.attr("y1", height - 3)
+			.attr("y2", height + 20)
 			.attr("stroke", "darkblue")
 			.attr("stroke-width", 2);
 
@@ -130,7 +132,7 @@ export const pmrChannelsPlugin = (options) => {
 		const markerLabelsEnter = markerLabels
 			.enter()
 			.append("text")
-			.attr("y", HEIGHT + 35)
+			.attr("y", height + 35)
 			.attr("class", "pmr-channel-marker-label")
 			.attr("fill", "darkblue");
 
@@ -140,7 +142,7 @@ export const pmrChannelsPlugin = (options) => {
 			.style("font-size", "0.75em")
 			.attr("transform", (d) => {
 				const x = xScale(d.center);
-				return `rotate(45, ${x + 10}, ${HEIGHT + 30})`;
+				return `rotate(45, ${x + 10}, ${height + 30})`;
 			})
 			.text((d) => `${(d.center / 1e6).toFixed(5)} MHz`);
 

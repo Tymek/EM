@@ -1,4 +1,4 @@
-import { MARGIN, WIDTH, HEIGHT } from "../utils.js";
+import { MARGIN, getDimensions } from "../utils.js";
 
 const { d3 } = window;
 
@@ -7,16 +7,17 @@ const { d3 } = window;
  */
 export const frequencyAxisPlugin = (options) => {
 	const { group } = options;
+	const { width, height } = getDimensions();
 
 	const xScale = d3
 		.scaleLog()
 		.domain([3, 3e24])
-		.range([MARGIN.left, WIDTH - MARGIN.right]);
+		.range([MARGIN.left, width - MARGIN.right]);
 
 	const axisGroup = group
 		.append("g")
 		.attr("class", "axis x-axis-frequency")
-		.attr("transform", `translate(0, ${HEIGHT})`);
+		.attr("transform", `translate(0, ${height})`);
 
 	const axisGenerator = d3
 		.axisBottom(xScale)

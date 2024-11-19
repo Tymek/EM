@@ -1,16 +1,20 @@
 /** @const @type {{top: number, right: number, bottom: number, left: number}} */
 export const MARGIN = { top: 50, right: 0, bottom: 50, left: 0 };
 /** @const @type {number} */
-export const WIDTH = window.innerWidth - MARGIN.left - MARGIN.right;
-/** @const @type {number} */
-export const HEIGHT = 250 - MARGIN.top - MARGIN.bottom;
-/** @const @type {number} */
 export const LEGEND_HEIGHT = 200;
-/** @const @type {299792458} */
-export const SPEED_OF_LIGHT = 299_792_458; // m/s
+/** @const @type {299792458} Speed of light in vacuum */
+export const C = 299_792_458; // m/s
+/** @const @type {[3, 3e24]} Define the frequency domain (from planet to quantum scale) */
+export const DOMAIN = [3, 3e24]; // Full frequency range
+
+export const getDimensions = () => {
+	const width = window.innerWidth - MARGIN.left - MARGIN.right;
+	const height = 250 - MARGIN.top - MARGIN.bottom;
+	return { width, height };
+};
 
 /**
- * @typedef {function(Object): { onUpdate: function(d3.ScaleLogarithmic, number): void }} PluginType
+ * @typedef {function(Object): { onUpdate: function(d3.ScaleLogarithmic, number): void, onResize?: function(): void }} PluginType
  * @property {d3.Selection<SVGGElement, unknown, HTMLElement, unknown>} options.group - Group selection.
  * @property {d3.Selection<SVGDefsElement, unknown, HTMLElement, unknown>} options.defs - Defs selection.
  */

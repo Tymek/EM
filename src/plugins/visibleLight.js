@@ -1,4 +1,4 @@
-import { HEIGHT } from "../utils.js";
+import { getDimensions } from "../utils.js";
 
 /**
  * This converts a given wavelength (in nanometers)
@@ -121,6 +121,8 @@ const FREQUENCY_RANGE = [4e14, 7.5e14];
 export const visibleLightPlugin = (options) => {
 	const { group, defs } = options;
 
+	const { height } = getDimensions();
+
 	const gradient = defs
 		.append("linearGradient")
 		.attr("id", "visible-light-gradient")
@@ -132,7 +134,7 @@ export const visibleLightPlugin = (options) => {
 		.append("rect")
 		.attr("class", "em-visible-light")
 		.attr("y", 0)
-		.attr("height", HEIGHT)
+		.attr("height", height)
 		.attr("fill", "url(#visible-light-gradient)");
 
 	for (const d of visibleLightGradientStops) {
