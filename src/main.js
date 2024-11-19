@@ -84,6 +84,28 @@ const tx = MARGIN.left - k * xStart;
 
 const initialTransform = d3.zoomIdentity.translate(tx, 0).scale(k);
 
+// Debounced function to update URL with new frequencies
+const debouncedUpdateURLWithFrequencies = debounce(
+	(newScale) => updateURLWithFrequencies(newScale, DOMAIN),
+	1_000,
+);
+
+/**
+ * Handles the zoom event.
+ * @param {d3.D3ZoomEvent<SVGSVGElement, unknown>} event - The zoom event object.
+ */
+function zoomed(event) {
+	// requestAnimationFrame(() => {
+	const t = event.transform;
+	const newXScale = t.rescaleX(xScaleFull);
+	xScale.domain(newXScale.domain());
+
+	updatePlugins(xScale, t.k);
+
+	debouncedUpdateURLWithFrequencies(xScale.domain());
+	// });
+}
+
 /** Define zoom behavior
  * @type {d3.ZoomBehavior<SVGSVGElement, unknown>} */
 const zoom = d3.zoom();
@@ -102,28 +124,6 @@ zoom
 
 // Apply initial transform and set up zoom
 svg.call(zoom).call(zoom.transform, initialTransform);
-
-/**
- * Handles the zoom event.
- * @param {d3.D3ZoomEvent<SVGSVGElement, unknown>} event - The zoom event object.
- */
-function zoomed(event) {
-	// requestAnimationFrame(() => {
-	const t = event.transform;
-	const newXScale = t.rescaleX(xScaleFull);
-	xScale.domain(newXScale.domain());
-
-	updatePlugins(xScale, t.k);
-
-	debouncedUpdateURLWithFrequencies(xScale.domain());
-	// });
-}
-
-// Debounced function to update URL with new frequencies
-const debouncedUpdateURLWithFrequencies = debounce(
-	(newScale) => updateURLWithFrequencies(newScale, DOMAIN),
-	1_000,
-);
 
 loadComponent("/src/components/fullscreen.html").then((data) => {
 	document.querySelector("#controls")?.appendChild(data);
