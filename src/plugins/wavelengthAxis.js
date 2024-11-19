@@ -1,4 +1,4 @@
-import { MARGIN, C, getDimensions } from "../utils.js";
+import { MARGIN, C, getDimensions, getEventBus } from "../utils.js";
 
 const { d3 } = window;
 
@@ -28,6 +28,10 @@ export const wavelengthAxisPlugin = (options) => {
 	// Apply the axis to the group
 	axisGroup.call(axisGenerator);
 
+	let speedOfLight = /** @type number */ (C);
+	let lastScale = null;
+	let lastK = 1;
+
 	/**
 	 * Updates the wavelength axis based on the provided frequency domain.
 	 *
@@ -35,8 +39,13 @@ export const wavelengthAxisPlugin = (options) => {
 	 * @param {number} k - Scaling factor used to adjust tick formatting.
 	 */
 	const onUpdate = (xScale, k) => {
+		lastScale = xScale;
+		lastK = k;
 		const freqDomain = xScale.domain();
-		const wavelengthDomain = [C / freqDomain[0], C / freqDomain[1]];
+		const wavelengthDomain = [
+			speedOfLight / freqDomain[0],
+			speedOfLight / freqDomain[1],
+		];
 		wavelengthScale.domain(wavelengthDomain);
 
 		axisGenerator.scale(wavelengthScale);
@@ -46,6 +55,13 @@ export const wavelengthAxisPlugin = (options) => {
 		});
 		axisGroup.call(axisGenerator);
 	};
+
+	getEventBus().on("velocityFactor", ({ speedOfLight: v }) => {
+		requestAnimationFrame(() => {
+			speedOfLight = v;
+			onUpdate(lastScale, lastK);
+		});
+	});
 
 	return { onUpdate };
 };

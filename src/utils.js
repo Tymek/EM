@@ -34,6 +34,28 @@ export function debounce(func, waitFor) {
 	};
 }
 
+/**
+ * @template {Function} F
+ * @param {F} func - The function to throttle
+ * @param {number} waitFor - The number of milliseconds to delay
+ * @returns {(...args: Parameters<F>) => void} - A throttled version of the function
+ */
+export function throttle(func, waitFor) {
+	let timeout;
+	let lastArgs;
+
+	return (...args) => {
+		lastArgs = args;
+		if (!timeout) {
+			timeout = setTimeout(() => {
+				func(...lastArgs);
+				timeout = null;
+			}, waitFor);
+		}
+	};
+}
+
+/** @const */
 const SI_PREFIXES = [
 	{ value: 1e24, symbol: "Y" },
 	{ value: 1e21, symbol: "Z" },
@@ -121,6 +143,61 @@ export function updateURLWithFrequencies([start, end], [min, max]) {
 }
 
 /**
+ * @param {number} velocityFactor - The velocity of propagation of light, or 100 if default.
+ */
+export function updateURLWithVelocityFactor(velocityFactor) {
+	const params = new URLSearchParams(window.location.search);
+
+	if (velocityFactor >= 100 || velocityFactor <= 0) {
+		params.delete("vf");
+	} else {
+		params.set("vf", `${velocityFactor.toString().replace(/^0/, "")}`);
+	}
+
+	const paramsString = params.toString();
+	const newURL = `${window.location.pathname}${paramsString ? `?${paramsString}` : ""}`;
+	window.history.replaceState({}, "", newURL);
+}
+
+/**
+ * @returns {number} >0 and ≤100
+ */
+export function getVelocityFactorFromURL() {
+	const params = new URLSearchParams(window.location.search);
+	const velocityFactorStr = params.get("vf");
+	if (velocityFactorStr !== null) {
+		const velocityFactor = Number.parseFloat(velocityFactorStr);
+		if (
+			!Number.isNaN(velocityFactor) &&
+			velocityFactor <= 100 &&
+			velocityFactor > 0
+		) {
+			return velocityFactor;
+		}
+	}
+	return 100;
+}
+
+/**
+ * @param {string | string[]} param - The URL parameters to listen to. If [], listen to all.
+ * @param {function(URLSearchParams): void} callback
+ */
+export function listenToURLChanges(param, callback) {
+	let state = new URLSearchParams(window.location.search);
+	const params = Array.isArray(param) ? param : [param];
+	window.addEventListener("hashchange", (event) => {
+		const newState = new URLSearchParams(window.location.search);
+		if (
+			params.length === 0 ||
+			params.some((param) => state.get(param) !== newState.get(param))
+		) {
+			state = newState;
+			callback(newState);
+		}
+	});
+}
+
+/**
  * Loads an HTML component from a specified URL and processes it.
  *
  * @param {string} url - The URL of the component to load, relative to the /src/components/ directory.
@@ -133,3 +210,100 @@ export const loadComponent = (url) =>
 			const fragment = range.createContextualFragment(data);
 			return fragment;
 		});
+
+/**
+ * @typedef {Object} EventTypes
+ * @property {Object} velocityFactor
+ * @property {number} velocityFactor.velocityFactor
+ * @property {number} velocityFactor.speedOfLight
+ */
+// * @property {Object} playerMove
+// * @property {number} playerMove.x
+// * @property {number} playerMove.y
+
+/**
+ * @returns {{
+ *   on: <K extends keyof EventTypes>(
+ *     event: K,
+ *     callback: (data: EventTypes[K]) => void
+ *   ) => ReturnType<typeof createEventBus>,
+ *   emit: <K extends keyof EventTypes>(
+ *     event: K,
+ *     data: EventTypes[K]
+ *   ) => ReturnType<typeof createEventBus>,
+ *   off: <K extends keyof EventTypes>(
+ *     event: K,
+ *     callback?: (data: EventTypes[K]) => void
+ *   ) => ReturnType<typeof createEventBus>
+ * }}
+ */
+function createEventBus() {
+	/** @type {Map<keyof EventTypes, Function[]>} */
+	const listeners = new Map();
+
+	/** @type {Object} */
+	const eventBus = {
+		/**
+		 * Register an event listener with type-safe callback
+		 * @template {keyof EventTypes} K
+		 * @param {K} event - The event name
+		 * @param {(data: EventTypes[K]) => void} callback - The callback function
+		 */
+		on(event, callback) {
+			if (!listeners.has(event)) {
+				listeners.set(event, []);
+			}
+			listeners.get(event).push(callback);
+		},
+
+		/**
+		 * Emit an event with type-safe data
+		 * @template {keyof EventTypes} K
+		 * @param {K} event - The event name
+		 * @param {EventTypes[K]} data - The event data
+		 */
+		emit(event, data) {
+			if (listeners.has(event)) {
+				for (const callback of listeners.get(event)) {
+					callback(data);
+				}
+			}
+		},
+
+		/**
+		 * Remove event listener(s) with type-safe callback
+		 * @template {keyof EventTypes} K
+		 * @param {K} event - The event name
+		 * @param {(data: EventTypes[K]) => void} [callback] - Optional specific callback to remove
+		 * @returns {ReturnType<typeof createEventBus>}
+		 */
+		off(event, callback) {
+			const eventListeners = listeners.get(event);
+			if (eventListeners) {
+				if (callback) {
+					const index = eventListeners.indexOf(callback);
+					if (index !== -1) {
+						eventListeners.splice(index, 1);
+					}
+				} else {
+					listeners.delete(event);
+				}
+			}
+			return eventBus;
+		},
+	};
+
+	return eventBus;
+}
+
+const eventBus = createEventBus();
+
+// @ts-expect-error
+window.emAppEventBus = eventBus;
+
+/**
+ * @returns {typeof eventBus}
+ */
+export const getEventBus = () =>
+	// @ts-expect-error
+	window.emAppEventBus;

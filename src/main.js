@@ -1,5 +1,3 @@
-// Import styles and libraries
-// import "./style.css";
 import { frequencyAxisPlugin } from "./plugins/frequencyAxis.js";
 import { emSpectrumBandsPlugin } from "./plugins/emSpectrumBands.js";
 import { wavelengthAxisPlugin } from "./plugins/wavelengthAxis.js";
@@ -15,6 +13,7 @@ import {
 	loadComponent,
 	DOMAIN,
 	getDimensions,
+	throttle,
 } from "./utils.js";
 
 const { d3 } = window;
@@ -27,7 +26,6 @@ const { d3 } = window;
 const SVG = d3.select("#canvas");
 
 const initialize = () => {
-	console.log("init");
 	SVG.selectAll("*").remove();
 	const { width, height } = getDimensions();
 	SVG.attr("min-height", height + LEGEND_HEIGHT);
@@ -93,16 +91,16 @@ const initialize = () => {
 	 * Handles the zoom event.
 	 * @param {d3.D3ZoomEvent<SVGSVGElement, unknown>} event - The zoom event object.
 	 */
-	function zoomed(event) {
-		// requestAnimationFrame(() => {
-		const t = event.transform;
-		const newXScale = t.rescaleX(xScaleFull);
-		xScale.domain(newXScale.domain());
+	function handleZoom(event) {
+		requestAnimationFrame(() => {
+			const t = event.transform;
+			const newXScale = t.rescaleX(xScaleFull);
+			xScale.domain(newXScale.domain());
 
-		updatePlugins(xScale, t.k);
+			updatePlugins(xScale, t.k);
 
-		debouncedUpdateURLWithFrequencies(xScale.domain());
-		// });
+			debouncedUpdateURLWithFrequencies(xScale.domain());
+		});
 	}
 
 	/** Define zoom behavior
@@ -119,7 +117,7 @@ const initialize = () => {
 			[MARGIN.left, 0],
 			[width - MARGIN.right, height],
 		])
-		.on("zoom", zoomed);
+		.on("zoom", handleZoom);
 
 	// Apply initial transform and set up zoom
 	SVG.call(zoom).call(zoom.transform, initialTransform);
@@ -127,13 +125,15 @@ const initialize = () => {
 
 initialize();
 
+loadComponent("/src/components/velocity-factor.html").then((data) => {
+	document.querySelector("#controls")?.appendChild(data);
+	import("./components/velocity-factor.js");
+});
+
 loadComponent("/src/components/fullscreen.html").then((data) => {
 	document.querySelector("#controls")?.appendChild(data);
 });
 
-const onResize = debounce(() => {
-	console.log("Resizing...");
-	initialize();
-}, 333);
+const onResize = throttle(initialize, 250); // butter smooth 4fps
 
 window.addEventListener("resize", onResize);
