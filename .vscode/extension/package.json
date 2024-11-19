@@ -1,0 +1,25 @@
+{
+  "name": "rbp",
+  "displayName": "Radio Band Plan",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "rbp",
+      "aliases": ["Radio Band Plan", "Radio Band Plan Description", "rbp"],
+      "extensions": ["rbp"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "rbp",
+      "scopeName": "source.rbp",
+      "path": "./syntaxes/rbp.tmLanguage.json"
+    }]
+  }
+}

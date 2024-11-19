@@ -58,7 +58,7 @@ Notes not proceeded by data can be used at any level to define terms used in the
 #/ AM: Double Sideband Amplitude Modulated (DSB AM) ...
 ```
 
-Notes proceeded by data add footnotes or additional metadata.
+Notes proceeded by data, add footnotes or additional metadata.
 
 ```
 30m
@@ -153,6 +153,7 @@ Commas can be escaped with a backslash.
 - `description` - short description of the segment or attribute. If longer description is needed, use notes.
 - `keywords` - comma separated list of tags used to categorize the segment
 - `mode` - modulation mode. Examples: `FM`, `NFM`, `SSB`, `CW`, `AM`, `ALL`
+- `polartization` - polarization of the signal. Examples: `H`, `V`, `L`, `R`, `RHCP`, `Right-Hand Circular`.
 - `jurisdiction` - regulatory body, agreement, or ISO-3166 country code that defines the band usage. Examples: `CEPT`, `IARU-1`, `EU`, `JP`
 - `bandplan` - definition of band plan. See below.
 - `channels` - definition of channels within the band. See below.
@@ -205,3 +206,25 @@ If there are subsequent declarations for the same channel (number and descriptio
 ## Markers
 
 Important frequencies within a band. Listing information other then bands and channels.
+
+## Polarization
+
+If value is beginning with a letter, only first character is taken into account. If values starts with an integer, it will be interpreted as `tilt angle / axial ratio`, with negative number indicating right-hand direction. Examples below are identical:
+
+```
+  polarization H
+  polarization horizontal
+  polarization 0
+  polarization 0/0
+```
+
+Other functinally equivalent examples are:
+
+- `V` = `vertical` = `90` = `90/0` = `-90` = `-90/0`
+- `L` = `left` = `LHCP` = `Left-Hand Circular` = `0/1`
+- `R` = `right` = `RHCP` = `Right-Hand Circular` = `-0/1`
+
+More complex expressions are as follows:
+
+- `-45/2` = 45 degrees right-hand elliptical polarization, with a minor axis 50% the size of major axis
+- `70.5/π` = 70.5 degrees left-hand elliptical polarization, with a minor axis 1/π times the major axis

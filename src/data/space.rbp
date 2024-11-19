@@ -30,3 +30,13 @@ SpaceX Dragon
     2205.5 MHz, SpaceX Dragon communications
     2231.5 MHz, SpaceX Dragon communications
     400.5 MHz, SpaceX Dragon communications
+
+NOAA APT Satellites
+  description Automatic Picture Transmission from National Oceanic and Atmospheric Administration satellites
+  #/ between 30 and 40kHz bandwidth
+  mode FM
+  polarization RHCP
+  markers - MHz, description
+    137.6200, NOAA 15
+    137.9125, NOAA 18
+    137.1000, NOAA 19

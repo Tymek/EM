@@ -33,12 +33,12 @@ amateur LF
 
   #// Notable frequencies
   markers - MHz, description
-    144.050, Telegraphy calling
+    144.050, CW calling
     144.100, Random MS
     144.195 - 144.205, Random MS SSB
     144.300, SSB Centre of activity
     144.489, WSPR
-    144.600, Data centre of activity (MGM, RTTY)
+    144.600, DATA centre of activity (MGM, RTTY)
     144.750, ATV talkback
     144.800, APRS
     144.8125, DV Internet voice gateway
@@ -49,5 +49,5 @@ amateur LF
     145.2375, FM Internet voice gateway
     145.2875, FM Internet voice gateway
     145.3375, FM Internet voice gateway
-    145.375, Digital voice calling
+    145.375, DV calling
     145.500, FM calling

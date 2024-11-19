@@ -1,0 +1,105 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Radio Band Plan",
+	"scopeName": "source.rbp",
+	"fileTypes": ["rbp"],
+	"patterns": [
+		{
+			"begin": "^(?!\\s)([a-zA-Z0-9\\s\\/\\-]+)$",
+			"beginCaptures": {
+				"1": {
+					"name": "entity.name.section.rbp"
+				}
+			},
+			"end": "(?=^(?!\\s))",
+			"patterns": [
+				{
+					"match": "^(\\s{4}|\\t{2})([a-zA-Z_\\\\s]+)(?=\\s)",
+					"captures": {
+						"2": {
+							"name": "keyword.sub-attribute.rbp"
+						}
+					}
+				},
+				{
+					"match": "^\\s+description .*$",
+					"name": "comment.description.rbp"
+				},
+				{
+					"match": "#\\/.*$",
+					"name": "comment.note.rbp"
+				},
+				{
+					"match": "#\\/\\/.*$",
+					"name": "comment.line.rbp"
+				},
+				{
+					"match": "(?<=\\s|,)(\\d+(\\.\\d+)?\\s*(Hz|kHz|MHz|GHz|THz|k))",
+					"name": "variable.parameter.frequency.rbp"
+				},
+				{
+					"match": "(?<=\\s|,)(\\d+(\\.\\d+)?\\s*(k|M|G)?bps)",
+					"name": "variable.parameter.bandwidth.rbp"
+				},
+				{
+					"match": "(?<=\\s|,)(\\d+(\\.\\d+)?|\\d+-\\d+)",
+					"name": "variable.parameter.numeric.rbp"
+				},
+				{
+					"match": "(?<=\\s|,)(\\d+(\\.\\d+)?\\s*(Hz|kHz|MHz|GHz))",
+					"name": "constant.numeric.frequency.rbp"
+				},
+				{
+					"match": "(?<=\\s|,)(\\d+(\\.\\d+)?\\s*(k|M|G)?bps)",
+					"name": "constant.numeric.bandwidth.rbp"
+				},
+				{
+					"match": "(FM|NFM|SSB|CW|AM|ALL|MGM|FSK|PSK|QPSK|QAM|OFDM|DVB|DV|DAB|DMR|NXDN|P25|TETRA|QRSS|RTTY|WSPR|APRS|ATV|DATA)",
+					"name": "constant.mode.rbp"
+				},
+				{
+					"match": "(CEPT|IARU-\\d|Worldwide)",
+					"name": "entity.jurisdiction.rbp"
+				},
+				{
+					"match": "\b(\\d+(?:-\\d+)?)\b",
+					"name": "constant.numeric.channel.rbp"
+				},
+				{
+					"match": "(?<=\\b\\d+\\s?)\\-",
+					"name": "keyword.operator.range"
+				},
+				{
+					"match": "(?<=\\b\\d+\\s?)/",
+					"name": "keyword.operator.list"
+				},
+				{
+					"match": "(,) ",
+					"name": "entity.name.tag"
+				},
+				{
+					"match": "^(\\s{2,4}|\\t)([a-zA-Z_\\\\s]+)(?=\\s)",
+					"captures": {
+						"2": {
+							"name": "keyword.attribute.rbp"
+						}
+					}
+				}
+			]
+		}
+	],
+	"repository": {
+		"attribute": {
+			"patterns": [
+				{
+					"match": "^(\\s{2}|\\t)([a-zA-Z_\\\\s]+)(?=\\s)",
+					"captures": {
+						"2": {
+							"name": "keyword.attribute.rbp"
+						}
+					}
+				}
+			]
+		}
+	}
+}
