@@ -103,7 +103,6 @@ const attributeParsers = {
  * @returns {[string, BandplanAttribute]}
  */
 function parseAttribute([header, lines]) {
-	console.log(header);
 	let [title, note] = splitNote(header);
 	if (note && !title) {
 		title = `note ${note}`;

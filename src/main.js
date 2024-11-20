@@ -141,9 +141,9 @@ window.addEventListener("resize", onResize);
 // 	const { parseBandplan } = await import("./bandplanParser.js");
 // 	const data = (
 // 		await Promise.all([
-// 			fetch("src/data/IARU-1.rbp").then((response) => response.text()),
-// 			fetch("src/data/CEPT.rbp").then((response) => response.text()),
-// 			fetch("src/data/space.rbp").then((response) => response.text()),
+// 			fetch("data/IARU-1.rbp").then((response) => response.text()),
+// 			fetch("data/CEPT.rbp").then((response) => response.text()),
+// 			fetch("data/space.rbp").then((response) => response.text()),
 // 		])
 // 	).map(parseBandplan);
 // 	console.log(data);
