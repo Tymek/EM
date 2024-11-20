@@ -5,10 +5,47 @@
 	"fileTypes": ["rbp"],
 	"patterns": [
 		{
-			"begin": "^(?!\\s)([a-zA-Z0-9\\s\\/\\-]+)$",
+			"begin": "^\\s",
+			"end": "^(?!\\s)",
+			"patterns": [
+				{
+					"match": "^\\s+description .*$",
+					"name": "comment.description.rbp"
+				},
+				{
+					"match": "#\\/.*$",
+					"name": "comment.note.rbp"
+				},
+				{
+					"match": "#\\/\\/.*$",
+					"name": "comment.line.rbp"
+				},
+				{
+					"match": "(CEPT|IARU-\\d|Worldwide)",
+					"name": "entity.jurisdiction.rbp"
+				},
+				{
+					"match": "\b(\\d+(?:-\\d+)?)\b",
+					"name": "constant.numeric.channel.rbp"
+				},
+				{
+					"match": "^(\\s{2,4}|\\t)([a-zA-Z_\\\\s]+)(?=\\s)",
+					"captures": {
+						"2": {
+							"name": "keyword.attribute.rbp"
+						}
+					}
+				}
+			]
+		},
+		{
+			"begin": "^(?!\\s)([\\w ]+)(#\\/\\/?.*)?$",
 			"beginCaptures": {
 				"1": {
 					"name": "entity.name.section.rbp"
+				},
+				"2": {
+					"name": "comment.note.rbp"
 				}
 			},
 			"end": "(?=^(?!\\s))",
@@ -67,15 +104,19 @@
 				},
 				{
 					"match": "(?<=\\b\\d+\\s?)\\-",
-					"name": "keyword.operator.range"
+					"name": "keyword.operator.range.rbp"
 				},
 				{
 					"match": "(?<=\\b\\d+\\s?)/",
-					"name": "keyword.operator.list"
+					"name": "keyword.operator.list.rbp"
 				},
 				{
 					"match": "(,) ",
-					"name": "entity.name.tag"
+					"name": "entity.name.tag.comma.rbp"
+				},
+				{
+					"match": " (CSV) ",
+					"name": "entity.name.tag.csv.rbp"
 				},
 				{
 					"match": "^(\\s{2,4}|\\t)([a-zA-Z_\\\\s]+)(?=\\s)",

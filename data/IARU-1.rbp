@@ -1,22 +1,35 @@
   type amateur
+  jurisdiction IARU-1
 
 2200m #/ LF band
   band 135.7 kHz - 137.8 kHz
   description LF amateur band
-  jurisdiction IARU-1
   keywords CW, QRSS, LF
-
+  mode CW
+  max_bandwidth 200 Hz
   bandplan
     135.7 kHz - 137.8 kHz
       description CW, QRSS, narrow band digital modes
-      mode CW
-      max_bandwidth 200 Hz
 
 630m #/ MF band
   band 472 kHz - 479 kHz
+  description 630m amateur band
+  #/ Details shown in band plan above should be understood as "proposed usage" (VA14_C4_Rec_02). If a frequency is to be selected, particular attention must be paid to still existing Non Directional Beacons (NDB) of the radionavigaton service!
+  bandplan CSV kHz, mode, max_bandwidth, description
+    472 - 475, CW, 200, 
+    475 - 479, CW/MGM/RTTY/PSK , 500, Narrow band modes only - maximum bandwidth not specified but 500 Hz suggested
 
 160m #/ MF band
-  band 1.810 MHz - 2 MHz
+  band 1.81 MHz - 2 MHz
+  description 160m amateur band
+  bandplan CSV kHz, mode, max_bandwidth, description
+    1810 - 1838, CW, 200, Telegraphy
+    1838 - 1840, Narrow band modes, 500, Digital modes
+    1840 - 1843, ALL, 2700, Digital modes
+    1843 - 2000, ALL, 2700, No specific usage notes
+
+  markers CSV kHz, mode, description
+    1836, CW, QRP Centre of Activity
 
 80m #/ low HF band
   band 3.5 MHz - 3.8 MHz
@@ -29,9 +42,7 @@
 2m
   band 144 MHz - 146 MHz
   description 2m amateur band
-  jurisdiction IARU-1
-
-  bandplan - MHz, mode, max_bandwidth, description
+  bandplan CSV MHz, mode, max_bandwidth, description
     144.000 - 144.025, ALL, 2700 #/ Satellite downlink only, Designers and operators of satellites using 144.0-144.025 MHz shall not transmit below 144.0025 MHz so that a necessary guard band is provided at the bottom band edge.
     144.025 - 144.100, CW, 500, Telegraphy
     144.100 - 144.150, CW/MGM, 500, CW and MGM EME
@@ -48,7 +59,7 @@
     145.806 - 146.000, ALL, 12k, Satellite exclusive
 
   #// Notable frequencies
-  markers - MHz, description
+  markers CSV MHz, description
     144.050, CW calling
     144.100, Random MS
     144.195 - 144.205, Random MS SSB
