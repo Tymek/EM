@@ -1,4 +1,6 @@
-amateur LF
+  type amateur
+
+2200m #/ LF band
   band 135.7 kHz - 137.8 kHz
   description LF amateur band
   jurisdiction IARU-1
@@ -9,6 +11,20 @@ amateur LF
       description CW, QRSS, narrow band digital modes
       mode CW
       max_bandwidth 200 Hz
+
+630m #/ MF band
+  band 472 kHz - 479 kHz
+
+160m #/ MF band
+  band 1.810 MHz - 2 MHz
+
+80m #/ low HF band
+  band 3.5 MHz - 3.8 MHz
+
+60m
+  band 5351.5 kHz - 5366.5 kHz
+  power - W EIRP, jurisdiction
+    15, PL
 
 2m
   band 144 MHz - 146 MHz

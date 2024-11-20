@@ -135,5 +135,17 @@ loadComponent("/src/components/fullscreen.html").then((data) => {
 });
 
 const onResize = throttle(initialize, 250); // butter smooth 4fps
-
 window.addEventListener("resize", onResize);
+
+// async function loadData() {
+// 	const { parseBandplan } = await import("./bandplanParser.js");
+// 	const data = (
+// 		await Promise.all([
+// 			fetch("src/data/IARU-1.rbp").then((response) => response.text()),
+// 			fetch("src/data/CEPT.rbp").then((response) => response.text()),
+// 			fetch("src/data/space.rbp").then((response) => response.text()),
+// 		])
+// 	).map(parseBandplan);
+// 	console.log(data);
+// }
+// loadData();

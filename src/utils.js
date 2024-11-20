@@ -87,7 +87,7 @@ function encodeFrequency(freq) {
  * @param {string} str - The frequency string to decode.
  * @returns {number} - The decoded frequency value.
  */
-function decodeFrequency(str) {
+export function decodeFrequency(str) {
 	let i = 0;
 	while ((i < str.length && !Number.isNaN(Number(str[i]))) || str[i] === ".") {
 		i++;
@@ -217,9 +217,6 @@ export const loadComponent = (url) =>
  * @property {number} velocityFactor.velocityFactor
  * @property {number} velocityFactor.speedOfLight
  */
-// * @property {Object} playerMove
-// * @property {number} playerMove.x
-// * @property {number} playerMove.y
 
 /**
  * @returns {{

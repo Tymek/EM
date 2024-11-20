@@ -8,7 +8,7 @@ Extension: `.rbp`
 ## General structure
 
 The format uses indentation to denote hierarchy within a section.
-Each level of hierarchy is indented by two spaces:
+Each level of hierarchy is indented by 2 spaces or 1 tab:
 
 - level 1 - sections: No indentation ("WiFi", "2m", "ISS")
 - level 2 - attributes: Indented by two spaces or tab (band, description, etc.).
@@ -121,6 +121,34 @@ LF
   bandplan
     135.7 kHz - 137.8 kHz
       mode CW
+```
+
+## Attributes before section
+
+If an attribute is defined before any section, it is applied to all sections within that file. For example:
+
+```
+  type marine
+  mode NFM
+
+A
+  band 157437500 - 160587500
+B
+  band 160887500 - 160912500
+```
+
+is equivalent with:
+
+```
+A
+  type marine
+  mode NFM
+  band 157437500 - 160587500
+
+B
+  type marine
+  mode NFM
+  band 160887500 - 160912500
 ```
 
 ### CSV notation
