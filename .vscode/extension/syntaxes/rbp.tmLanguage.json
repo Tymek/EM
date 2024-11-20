@@ -39,7 +39,7 @@
 			]
 		},
 		{
-			"begin": "^(?!\\s)([\\w ]+)(#\\/\\/?.*)?$",
+			"begin": "^(?!\\s)([\\S ]+)(#\\/\\/?.*)?$",
 			"beginCaptures": {
 				"1": {
 					"name": "entity.name.section.rbp"

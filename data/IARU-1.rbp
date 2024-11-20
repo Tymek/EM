@@ -33,11 +33,76 @@
 
 80m #/ low HF band
   band 3.5 MHz - 3.8 MHz
+  description 80m amateur band
+  jurisdiction IARU-1
+  bandplan CSV kHz, mode, max_bandwidth, description
+    3500 - 3510, CW, 200, Priority for intercontinental operation
+    3510 - 3560, CW, 200, CW contest preferred
+    3560 - 3570, CW, 200, CW QRP Centre of Activity
+    3570 - 3580, MGM, 200, Digital modes
+    3580 - 3590, MGM, 500, Digital modes
+    3590 - 3600, MGM, 500, Digital modes and unattended operation
+    3600 - 3620, ALL, 2700, Digital modes and unattended operation
+    3620 - 3650, ALL, 2700, SSB contest preferred
+    3650 - 3700, ALL, 2700, SSB QRP Centre of Activity at 3690 kHz
+    3700 - 3775, ALL, 2700, SSB contest preferred
+    3775 - 3800, ALL, 2700, SSB contest preferred and priority for intercontinental operation
+  markers CSV kHz, description
+    3555, CW QRS Centre of Activity
+    3560, CW QRP Centre of Activity
+    3630, Digital Voice Centre of Activity
+    3690, SSB QRP Centre of Activity
+    3735, Image Centre of Activity
+    3760, Region 1 Emergency Centre of Activity
 
 60m
+  description 60m amateur band
   band 5351.5 kHz - 5366.5 kHz
-  power - W EIRP, jurisdiction
-    15, PL
+  #/ Details shown in band plan above should be understood as "proposed usage" (LA17_C4_REC_02). Highest dial setting for USB Voice mode on the band: 5363 kHz. It is strongly recommended that frequencies within WRC-15 allocation only be used if there are no other frequencies available at 5 MHz under domestic (ITU-R article 4.4) permissions. Local nets and long rag chew QSOS should not use the WRC-15 allocation at 5 MHz but should instead make use of the 3.5 MHz, 5 MHz domestic, or 7 MHz bands where there is more spectrum available.
+  keywords 60m, 5MHz, WARC-15
+  bandplan CSV kHz, mode, max_bandwidth, description
+    5351.5 - 5354.0, CW, 200, Narrow band modes
+    5354.0 - 5366.0, ALL, 2700, USB recommended for voice operation
+    5366.0 - 5366.5, ALL, 20, Weak signal narrow band modes
+
+40m
+  band 7 MHz - 7.2 MHz
+  description 40m amateur band
+
+30m
+  description 30m amateur band
+  band 10.1 MHz - 10.15 MHz
+  keywords 30m, WARC, WARC-79
+
+20m
+  band 14 MHz - 14.35 MHz
+  description 20m amateur band
+
+17m
+  description 17m amateur band
+  band 18.068 MHz - 18.168 MHz
+  keywords 17m, WARC, WARC-79
+
+15m
+  band 21 MHz - 21.45 MHz
+  description 15m amateur band
+
+12m
+  description 12m amateur band
+  band 24.89 MHz - 24.99 MHz
+  keywords 12m, WARC, WARC-79
+
+10m
+  band 28 MHz - 29.7 MHz
+  description 10m amateur band
+
+6m
+  band 50 MHz - 52 MHz
+  description 6m amateur band
+
+4m
+  band 70 MHz - 70.5 MHz
+  description 4m amateur band
 
 2m
   band 144 MHz - 146 MHz
@@ -78,3 +143,47 @@
     145.3375, FM Internet voice gateway
     145.375, DV calling
     145.500, FM calling
+
+70cm
+  band 430 MHz - 440 MHz
+  description 70cm amateur band
+
+23cm
+  band 1.24 GHz - 1.3 GHz
+  description 23cm amateur band
+
+13cm
+  band 2.3 GHz - 2.45 GHz
+  description 13cm amateur band
+
+9cm
+  band 3.4 GHz - 3.475 GHz
+  description 9cm amateur band
+
+6cm
+  band 5.65 GHz - 5.85 GHz
+  description 6cm amateur band
+
+3cm
+  band 10 GHz - 10.5 GHz
+  description 3cm amateur band
+
+12mm
+  band 24 GHz - 24.25 GHz
+  description 12mm amateur band
+
+6mm
+  band 47 GHz - 47.2 GHz
+  description 6mm amateur band
+
+4mm
+  band 75.5 GHz - 81.5 GHz
+  description 4mm amateur band
+
+2mm
+  band 134 GHz - 136 GHz
+  description 2mm amateur band
+
+<2mm
+  band 241 GHz - 250 GHz
+  description Sub-2mm amateur band
