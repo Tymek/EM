@@ -2,7 +2,6 @@ import { frequencyAxisPlugin } from "./plugins/frequencyAxis.js";
 import { emSpectrumBandsPlugin } from "./plugins/emSpectrumBands.js";
 import { wavelengthAxisPlugin } from "./plugins/wavelengthAxis.js";
 import { visibleLightPlugin } from "./plugins/visibleLight.js";
-import { pmrChannelsPlugin } from "./plugins/pmr.js";
 import { bandplanPlugin } from "./plugins/bandplan.js";
 import {
 	MARGIN,
@@ -15,6 +14,7 @@ import {
 	getDimensions,
 	throttle,
 } from "./utils.js";
+import { radioBandsPlugin } from "./plugins/radioBands.js";
 
 const { d3 } = window;
 
@@ -55,12 +55,13 @@ const initialize = () => {
 
 	// Initialize plugins and apply them to the group
 	const plugins = [
+		radioBandsPlugin,
 		emSpectrumBandsPlugin,
-		frequencyAxisPlugin,
 		visibleLightPlugin,
-		wavelengthAxisPlugin,
-		pmrChannelsPlugin,
 		bandplanPlugin,
+		frequencyAxisPlugin,
+		wavelengthAxisPlugin,
+		// pmrChannelsPlugin,
 	].map((plugin) => plugin({ group: svgGroup, defs }));
 
 	// Define the function updating plugins for attaching update handlers
@@ -136,16 +137,3 @@ loadComponent("/src/components/fullscreen.html").then((data) => {
 
 const onResize = throttle(initialize, 250); // butter smooth 4fps
 window.addEventListener("resize", onResize);
-
-// async function loadData() {
-// 	const { parseBandplan } = await import("./bandplanParser.js");
-// 	const data = (
-// 		await Promise.all([
-// 			fetch("data/IARU-1.rbp").then((response) => response.text()),
-// 			fetch("data/CEPT.rbp").then((response) => response.text()),
-// 			fetch("data/space.rbp").then((response) => response.text()),
-// 		])
-// 	).map(parseBandplan);
-// 	console.log(data);
-// }
-// loadData();

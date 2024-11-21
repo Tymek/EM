@@ -72,7 +72,7 @@ const SI_PREFIXES = [
  * @param {number} freq - The frequency value to encode.
  * @returns {string} - The encoded frequency string.
  */
-function encodeFrequency(freq) {
+export function encodeFrequency(freq) {
 	for (let i = 0; i < SI_PREFIXES.length; i++) {
 		if (freq >= SI_PREFIXES[i].value) {
 			const value = freq / SI_PREFIXES[i].value;
@@ -195,6 +195,21 @@ export function listenToURLChanges(param, callback) {
 			callback(newState);
 		}
 	});
+}
+
+/**
+ * Normalizes a value between a given range [min, max].
+ *
+ * @param {number} value - The value to be normalized.
+ * @param {number} min - The minimum of the range.
+ * @param {number} max - The maximum of the range.
+ * @returns {number} - The normalized value between 0 and 1.
+ */
+export function normalize(value, min, max) {
+	if (min === max) {
+		throw new Error("Min and max cannot be the same value");
+	}
+	return (value - min) / (max - min);
 }
 
 /**

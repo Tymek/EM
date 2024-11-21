@@ -1,46 +1,39 @@
-import { getDimensions } from "../utils.js";
+import { parseBandplan } from "../bandplanParser.js";
+import { encodeFrequency, getDimensions } from "../utils.js";
 
 /**
- * @typedef {Object} BandData
- * @property {string} band
- * @property {number} start
- * @property {number} end
- * @property {string} color
+ * @typedef {Object} TypeValue
+ * @property {string} value - The value of the type.
+ */
+
+/**
+ * @typedef {Object} BandRange
+ * @property {[number, number]} value - Array containing the start and end frequency in Hz.
  */
 
 /**
  * @typedef {(value: number) => number} XScale
  */
 
-/** @type {Array<BandData>} */
-const IARU_band_data = [
-	{ band: "2200m", start: 135700, end: 137800, color: "#ffb3b3" },
-	{ band: "630m", start: 472000, end: 479000, color: "#ff9999" },
-	{ band: "160m", start: 1810000, end: 2000000, color: "#ffcccc" },
-	{ band: "80m", start: 3500000, end: 3800000, color: "#ff9999" },
-	{ band: "60m", start: 5351500, end: 5366500, color: "#ff8080" },
-	{ band: "40m", start: 7000000, end: 7200000, color: "#ff6666" },
-	{ band: "30m", start: 10100000, end: 10150000, color: "#ff4d4d" },
-	{ band: "20m", start: 14000000, end: 14350000, color: "#ff3333" },
-	{ band: "17m", start: 18068000, end: 18168000, color: "#ff1a1a" },
-	{ band: "15m", start: 21000000, end: 21450000, color: "#ff0000" },
-	{ band: "12m", start: 24890000, end: 24990000, color: "#e60000" },
-	{ band: "10m", start: 28000000, end: 29700000, color: "#cc0000" },
-	{ band: "6m", start: 50000000, end: 52000000, color: "#990000" },
-	{ band: "4m", start: 70000000, end: 70500000, color: "#800000" },
-	{ band: "2m", start: 144000000, end: 146000000, color: "#660000" },
-	{ band: "70cm", start: 430000000, end: 440000000, color: "#330000" },
-	{ band: "23cm", start: 1240000000, end: 1300000000, color: "#000033" },
-	{ band: "13cm", start: 2300000000, end: 2450000000, color: "#000066" },
-	{ band: "9cm", start: 3400000000, end: 3475000000, color: "#000099" },
-	{ band: "6cm", start: 5650000000, end: 5850000000, color: "#0000cc" },
-	{ band: "3cm", start: 10000000000, end: 10500000000, color: "#0000ff" },
-	{ band: "12mm", start: 24000000000, end: 24250000000, color: "#3333ff" },
-	{ band: "6mm", start: 47000000000, end: 47200000000, color: "#0033ff" },
-	{ band: "4mm", start: 75500000000, end: 81500000000, color: "#3366ff" },
-	{ band: "2mm", start: 134000000000, end: 136000000000, color: "#99ccff" },
-	{ band: "<2mm", start: 241000000000, end: 250000000000, color: "#ccffff" },
-];
+const colors = {
+	amateur: "#409171",
+	civil: "#469fb1",
+	space: "#d8e8de",
+};
+
+/** @type import("../bandplanParser.js").BandplanSection[] */
+let data = [];
+
+async function loadData() {
+	const data = (
+		await Promise.all([
+			fetch("data/IARU-1.rbp").then((response) => response.text()),
+			// fetch("data/CEPT.rbp").then((response) => response.text()),
+			// fetch("data/space.rbp").then((response) => response.text()),
+		])
+	).map(parseBandplan);
+	return data;
+}
 
 /**
  * @type {import("../utils").PluginType}
@@ -57,12 +50,15 @@ export const bandplanPlugin = (options) => {
 	 * @param {number} y1
 	 * @param {number} y2
 	 * @param {string} color
-	 * @param {(d: BandData) => number} xFunc
+	 * @param {(d: import("../bandplanParser.js").BandplanSection) => number} xFunc
 	 */
 	const drawMarkers = (selection, className, y1, y2, color, xFunc) => {
-		/** @type {d3.Selection<SVGLineElement, BandData, SVGGElement, unknown>} */
+		/** @type {d3.Selection<SVGLineElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const markers = /** @type {any} */ (
-			selection.selectAll(`.${className}`).data(IARU_band_data, (d) => d.band)
+			selection.selectAll(`.${className}`).data(
+				data.filter((x) => x?.band?.value),
+				(d) => d,
+			)
 		);
 
 		const markersEnter = markers
@@ -71,7 +67,7 @@ export const bandplanPlugin = (options) => {
 			.attr("class", className)
 			.attr("y1", y1)
 			.attr("y2", y2)
-			.attr("stroke", color)
+			.attr("stroke", "#555")
 			.attr("stroke-width", 2);
 
 		markersEnter.merge(markers).attr("x1", xFunc).attr("x2", xFunc);
@@ -85,8 +81,8 @@ export const bandplanPlugin = (options) => {
 	 * @param {string} className
 	 * @param {number} y
 	 * @param {string} fill
-	 * @param {(d: BandData) => number} xFunc
-	 * @param {(d: BandData) => string} textFunc
+	 * @param {(d: import("../bandplanParser.js").BandplanSection) => number} xFunc
+	 * @param {(d: import("../bandplanParser.js").BandplanSection) => string} textFunc
 	 * @param {boolean} [rotate=false]
 	 */
 	const drawLabels = (
@@ -98,9 +94,12 @@ export const bandplanPlugin = (options) => {
 		textFunc,
 		rotate = false,
 	) => {
-		/** @type {d3.Selection<SVGTextElement, BandData, SVGGElement, unknown>} */
+		/** @type {d3.Selection<SVGTextElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const labels = /** @type {any} */ (
-			selection.selectAll(`.${className}`).data(IARU_band_data, (d) => d.band)
+			selection.selectAll(`.${className}`).data(
+				data.filter((x) => x?.band?.value),
+				(d) => d,
+			)
 		);
 
 		const labelsEnter = labels
@@ -108,7 +107,8 @@ export const bandplanPlugin = (options) => {
 			.append("text")
 			.attr("class", className)
 			.attr("y", y)
-			.attr("text-anchor", "middle")
+			.attr("text-anchor", rotate ? "start" : "middle")
+			.attr("alignment-baseline", "middle")
 			.attr("fill", fill);
 
 		labelsEnter
@@ -120,12 +120,15 @@ export const bandplanPlugin = (options) => {
 		if (rotate) {
 			labelsEnter.merge(labels).attr("transform", (d) => {
 				const x = xFunc(d);
-				return `rotate(45, ${x - 10}, ${y + 25})`;
+				return `rotate(90, ${x + 2}, ${y - 2})`;
 			});
 		}
 
 		labels.exit().remove();
 	};
+
+	let lastScale = null;
+	let lastK = 1;
 
 	/**
 	 * Updates the chart with new scaling and zoom level.
@@ -133,14 +136,19 @@ export const bandplanPlugin = (options) => {
 	 * @param {number} k
 	 */
 	const onUpdate = (xScale, k) => {
+		lastScale = xScale;
+		lastK = k;
 		const visible = k >= 3;
 		group.style("display", visible ? "block" : "none");
 
-		if (!visible) return;
+		if (!visible || data.length < 1) return;
 
-		/** @type {d3.Selection<SVGRectElement, BandData, SVGGElement, unknown>} */
+		/** @type {d3.Selection<SVGRectElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const bands = /** @type {any} */ (
-			group.selectAll(".iaru-band").data(IARU_band_data, (d) => d.band)
+			group.selectAll(".iaru-band").data(
+				data.filter((x) => x?.band?.value),
+				(d) => d,
+			)
 		);
 
 		const { height } = getDimensions();
@@ -149,14 +157,14 @@ export const bandplanPlugin = (options) => {
 			.enter()
 			.append("rect")
 			.attr("class", "iaru-band")
-			.attr("y", height / 2)
-			.attr("height", height / 2)
-			.attr("fill", (d) => d.color);
+			.attr("y", 0)
+			.attr("height", height)
+			.attr("fill", "#409171");
 
 		bandsEnter
 			.merge(bands)
-			.attr("x", (d) => xScale(d.start))
-			.attr("width", (d) => xScale(d.end) - xScale(d.start));
+			.attr("x", (d) => xScale(d.band.value[0]))
+			.attr("width", (d) => xScale(d.band.value[1]) - xScale(d.band.value[0]));
 
 		bandsEnter
 			.append("title")
@@ -165,41 +173,45 @@ export const bandplanPlugin = (options) => {
 
 		bands.exit().remove();
 
-		drawLabels(
-			group,
-			"iaru-band-label",
-			height / 2 - 20,
-			"black",
-			(d) => (xScale(d.start) + xScale(d.end)) / 2,
-			(d) => `${d.band}\nband`,
-		);
-
 		if (k >= 50) {
+			drawLabels(
+				group,
+				"iaru-band-label",
+				height / 2 - 20,
+				"black",
+				(d) => (xScale(d.band.value[1]) + xScale(d.band.value[0])) / 2,
+				(d) => `${d.title.value}\nband`,
+			);
+		} else {
+			group.selectAll(".iaru-band-label").remove();
+		}
+
+		if (k >= 100) {
 			drawMarkers(
 				group,
 				"iaru-band-marker-start",
-				height - 3,
+				height,
 				height + 20,
-				"darkblue",
-				(d) => xScale(d.start),
+				"white",
+				(d) => xScale(d.band.value[0]),
 			);
 
 			drawMarkers(
 				group,
 				"iaru-band-marker-end",
-				height - 3,
+				height,
 				height + 20,
-				"darkblue",
-				(d) => xScale(d.end),
+				"white",
+				(d) => xScale(d.band.value[1]),
 			);
 
 			drawLabels(
 				group,
 				"iaru-band-marker-label-start",
 				height + 35,
-				"darkblue",
-				(d) => xScale(d.start),
-				(d) => `${(d.start / 1e6).toFixed(3)} MHz`,
+				"white",
+				(d) => xScale(d.band.value[0]),
+				(d) => `${encodeFrequency(d.band.value[0])} MHz`,
 				true,
 			);
 
@@ -207,9 +219,9 @@ export const bandplanPlugin = (options) => {
 				group,
 				"iaru-band-marker-label-end",
 				height + 35,
-				"darkblue",
-				(d) => xScale(d.end),
-				(d) => `${(d.end / 1e6).toFixed(3)} MHz`,
+				"white",
+				(d) => xScale(d.band.value[1]),
+				(d) => `${encodeFrequency(d.band.value[1])}Hz`,
 				true,
 			);
 		} else {
@@ -219,6 +231,11 @@ export const bandplanPlugin = (options) => {
 			group.selectAll(".iaru-band-marker-label-end").remove();
 		}
 	};
+
+	loadData().then((v) => {
+		data = v.flat();
+		onUpdate(lastScale, lastK);
+	});
 
 	return { onUpdate };
 };
