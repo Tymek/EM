@@ -89,14 +89,21 @@ export function encodeFrequency(freq) {
  */
 export function decodeFrequency(str) {
 	let i = 0;
-	while ((i < str.length && !Number.isNaN(Number(str[i]))) || str[i] === ".") {
+	while (
+		(i < str.length && !Number.isNaN(Number(str[i]))) ||
+		[".", "+", "-", "e"].includes(str[i])
+	) {
 		i++;
 	}
 
 	const value = Number.parseFloat(str.slice(0, i));
-	const prefix = str.slice(i);
+	const prefix = str.slice(i).trim().replace("Hz", "");
+	if (prefix === "") {
+		return value;
+	}
 	const multiplier =
 		SI_PREFIXES.find((p) => p.symbol === prefix)?.value ?? Number.NaN;
+	// console.debug({ str, i, value, prefix, multiplier });
 
 	return value * multiplier;
 }
@@ -310,8 +317,12 @@ function createEventBus() {
 
 const eventBus = createEventBus();
 
-// @ts-expect-error
-window.emAppEventBus = eventBus;
+if (typeof window !== "undefined") {
+	// @ts-expect-error
+	window.emAppEventBus = eventBus;
+} else {
+	global.emAppEventBus = eventBus;
+}
 
 /**
  * @returns {typeof eventBus}
