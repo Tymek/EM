@@ -132,7 +132,7 @@ export const bandplanPlugin = (options) => {
 
 	/**
 	 * Updates the chart with new scaling and zoom level.
-	 * @param {XScale} xScale
+	 * @param {import("d3").ScaleLogarithmic<number, number, never>} xScale
 	 * @param {number} k
 	 */
 	const onUpdate = (xScale, k) => {
@@ -143,10 +143,18 @@ export const bandplanPlugin = (options) => {
 
 		if (!visible || data.length < 1) return;
 
+		const [domainStart, domainEnd] = xScale.domain();
+		const visibleData = data.filter(
+			(d) =>
+				d?.band?.value &&
+				d.band.value[1] > domainStart &&
+				d.band.value[0] < domainEnd,
+		);
+
 		/** @type {d3.Selection<SVGRectElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const bands = /** @type {any} */ (
 			group.selectAll(".iaru-band").data(
-				data.filter((x) => x?.band?.value),
+				visibleData.filter((x) => x?.band?.value),
 				(d) => d,
 			)
 		);
@@ -166,10 +174,10 @@ export const bandplanPlugin = (options) => {
 			.attr("x", (d) => xScale(d.band.value[0]))
 			.attr("width", (d) => xScale(d.band.value[1]) - xScale(d.band.value[0]));
 
-		bandsEnter
-			.append("title")
-			.merge(bands.select("title"))
-			.text((d) => `IARU Band: ${d.band}`);
+		// bandsEnter
+		// 	.append("title")
+		// 	.merge(bands.select("title"))
+		// 	.text((d) => `IARU Band: ${d.band}`);
 
 		bands.exit().remove();
 
@@ -229,6 +237,18 @@ export const bandplanPlugin = (options) => {
 			group.selectAll(".iaru-band-marker-end").remove();
 			group.selectAll(".iaru-band-marker-label-start").remove();
 			group.selectAll(".iaru-band-marker-label-end").remove();
+		}
+
+		if (k >= 200) {
+			console.log(data);
+			// drawLabels(
+			// 	group,
+			// 	"iaru-band-note",
+			// 	height / 2 + 20,
+			// 	"black",
+			// 	(d) => (xScale(d.band.value[1]) + xScale(d.band.value[0])) / 2,
+			// 	(d) => d.note,
+			// );
 		}
 	};
 

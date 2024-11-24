@@ -87,7 +87,7 @@ function splitOnFirst(str, sep) {
  * @typedef {Object.<string, BandplanAttribute>} BandplanSection
  */
 
-const attributeParsers = {
+export const attributeParsers = {
 	/**
 	 * Parses a band attribute to extract frequency range.
 	 * @param {BandplanAttribute} attribute - The attribute to parse.
@@ -98,6 +98,24 @@ const attributeParsers = {
 			.split("-")
 			.map((v) => decodeFrequency(v.trim().replace("Hz", "")));
 		return { ...attribute, value: [start, end] };
+	},
+	/**
+	 * @param {BandplanAttribute} attribute - The attribute to parse.
+	 */
+	markers: (attribute) => {
+		if (!attribute.data) {
+			return {
+				...attribute,
+				data: [],
+			};
+		}
+
+		const data = attribute.data.map((line) => {
+			const [frequency, description] = line.split(",").map((v) => v.trim());
+			// const [start, end] = frequency.split("-").map((v) => decodeFrequency(v));
+			return { frequency: decodeFrequency(frequency), description };
+		});
+		return { ...attribute, data };
 	},
 };
 
