@@ -110,11 +110,22 @@ export const attributeParsers = {
 			};
 		}
 
+		if (!attribute.value.startsWith("CSV ")) {
+			return attribute;
+		}
+
+		const [unit, ...columns] = attribute.value
+			.slice(4)
+			.split(",")
+			.map((v) => v.trim());
+
 		const data = attribute.data.map((line) => {
-			const [frequency, description] = line.split(",").map((v) => v.trim());
+			const [frequency, ...other] = line.split(",").map((v) => v.trim());
+			console.log({ x: `${frequency} ${unit}` });
 			// const [start, end] = frequency.split("-").map((v) => decodeFrequency(v));
-			return { frequency: decodeFrequency(frequency), description };
+			return { frequency: decodeFrequency(`${frequency} ${unit}`) };
 		});
+
 		return { ...attribute, data };
 	},
 };

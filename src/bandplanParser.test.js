@@ -9,7 +9,9 @@ import { attributeParsers } from "./bandplanParser.js";
 	};
 
 	const result = markers(marker);
+	// console.debug(result.data);
 
+	// @ts-ignore
 	if (!(result.data[0].frequency === 144050000)) {
 		throw new Error("parse frequency");
 	}
