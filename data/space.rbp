@@ -3,7 +3,7 @@
 ISS
   description International Space Station
 
-  markers - MHz, mode, max_bandwidth, description, jurisdiction
+  markers CSV MHz, mode, max_bandwidth, description, jurisdiction
     145.800, FM, 12k, ISS Voice Downlink, IARU-1
     144.490, FM, 12k, ISS Voice Uplink, IARU-1
     145.825, FM, 12k, ISS APRS Packet System, Worldwide
@@ -12,7 +12,7 @@ ISS
     145.990, FM, 12k, FM V/u Uplink with PL VOICE Repeater
     437.550, FM, 12k, UHF Simplex\, rarely used, Worldwide
 
-  markers - MHz, description
+  markers CSV MHz, description
     145.800, FM SSTV downlink, generally PD120 mode
     121.125, FM RS EVA from Orlan suit
     121.750, FM Downlink from Soyuz-TM (voice), RS EVA from Orlan suit, Soyuz VHF-2, Progress Telemetry
@@ -26,7 +26,7 @@ ISS
     15003.4, Digital Data downlink
 
 SpaceX Dragon
-  markers - MHz, description
+  markers CSV MHz, description
     2216 MHz, SpaceX Dragon communications
     2205.5 MHz, SpaceX Dragon communications
     2231.5 MHz, SpaceX Dragon communications
@@ -37,7 +37,7 @@ NOAA APT Satellites
   #/ between 30 and 40kHz bandwidth
   mode FM
   polarization RHCP
-  markers - MHz, description
+  markers CSV MHz, description
     137.6200, NOAA 15
     137.9125, NOAA 18
     137.1000, NOAA 19

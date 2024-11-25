@@ -23,13 +23,14 @@ const colors = {
 
 /** @type import("../bandplanParser.js").BandplanSection[] */
 let data = [];
+let markers = [];
 
 async function loadData() {
 	const data = (
 		await Promise.all([
 			fetch("data/IARU-1.rbp").then((response) => response.text()),
 			// fetch("data/CEPT.rbp").then((response) => response.text()),
-			// fetch("data/space.rbp").then((response) => response.text()),
+			fetch("data/space.rbp").then((response) => response.text()),
 		])
 	).map(parseBandplan);
 	return data;
@@ -52,7 +53,7 @@ export const bandplanPlugin = (options) => {
 	 * @param {string} color
 	 * @param {(d: import("../bandplanParser.js").BandplanSection) => number} xFunc
 	 */
-	const drawMarkers = (selection, className, y1, y2, color, xFunc) => {
+	const drawBandMarkers = (selection, className, y1, y2, color, xFunc) => {
 		/** @type {d3.Selection<SVGLineElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const markers = /** @type {any} */ (
 			selection.selectAll(`.${className}`).data(
@@ -67,7 +68,7 @@ export const bandplanPlugin = (options) => {
 			.attr("class", className)
 			.attr("y1", y1)
 			.attr("y2", y2)
-			.attr("stroke", "#555")
+			.attr("stroke", "#777")
 			.attr("stroke-width", 2);
 
 		markersEnter.merge(markers).attr("x1", xFunc).attr("x2", xFunc);
@@ -136,6 +137,7 @@ export const bandplanPlugin = (options) => {
 	 * @param {number} k
 	 */
 	const onUpdate = (xScale, k) => {
+		if (!xScale) return;
 		lastScale = xScale;
 		lastK = k;
 		const visible = k >= 3;
@@ -195,20 +197,20 @@ export const bandplanPlugin = (options) => {
 		}
 
 		if (k >= 100) {
-			drawMarkers(
+			drawBandMarkers(
 				group,
 				"iaru-band-marker-start",
 				height,
-				height + 20,
+				height + 24,
 				"white",
 				(d) => xScale(d.band.value[0]),
 			);
 
-			drawMarkers(
+			drawBandMarkers(
 				group,
 				"iaru-band-marker-end",
 				height,
-				height + 20,
+				height + 24,
 				"white",
 				(d) => xScale(d.band.value[1]),
 			);
@@ -239,21 +241,64 @@ export const bandplanPlugin = (options) => {
 			group.selectAll(".iaru-band-marker-label-end").remove();
 		}
 
-		if (k >= 200) {
-			console.log(data);
-			// drawLabels(
-			// 	group,
-			// 	"iaru-band-note",
-			// 	height / 2 + 20,
-			// 	"black",
-			// 	(d) => (xScale(d.band.value[1]) + xScale(d.band.value[0])) / 2,
-			// 	(d) => d.note,
-			// );
+		if (k >= 500) {
+			const visibleMarkers = markers.filter((d) => {
+				const freq = d.frequency;
+				return freq > domainStart && freq < domainEnd;
+			});
+
+			const markerItems = group
+				.selectAll(".iaru-band-marker-item")
+				.data(visibleMarkers);
+
+			const markerItemsEnter = markerItems
+				.enter()
+				.append("g")
+				.attr("class", "iaru-band-marker-item");
+
+			markerItemsEnter.append("line");
+
+			markerItemsEnter.append("text");
+
+			const markerItemsUpdate = markerItemsEnter.merge(markerItems);
+
+			markerItemsUpdate.attr(
+				"transform",
+				(d) => `translate(${xScale(d.frequency)}, ${height})`,
+			);
+
+			markerItemsUpdate
+				.select("line")
+				.attr("y1", 0)
+				.attr("y2", 20)
+				.attr("stroke", "gray")
+				.attr("stroke-width", 1);
+
+			markerItemsUpdate
+				.select("text")
+				.attr("text-anchor", "start")
+				.attr("alignment-baseline", "middle")
+				.attr("fill", "gray")
+				.attr("font-size", "0.75em")
+				.attr("transform", "translate(-2, 22), rotate(90)")
+				.attr("display", (d) => (k >= 2_500 ? "block" : "none"))
+				.text((d) => `${d.formattedFrequency} — ${d.description}`);
+
+			markerItems.exit().remove();
+		} else {
+			group.selectAll(".iaru-band-marker-item").remove();
 		}
 	};
 
 	loadData().then((v) => {
 		data = v.flat();
+		markers = data.flatMap((d) => {
+			if (d?.markers?.data && d.markers.data.length > 0) {
+				return d.markers.data;
+			}
+			return [];
+		});
+
 		onUpdate(lastScale, lastK);
 	});
 

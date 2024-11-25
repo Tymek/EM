@@ -80,7 +80,7 @@ function splitOnFirst(str, sep) {
  * @typedef {Object} BandplanAttribute
  * @property {string | any} [value] - The value of the attribute.
  * @property {string} [note] - The note associated with the attribute.
- * @property {string[]} [data] - Additional data for the attribute.
+ * @property {string[] | any} [data] - Additional data for the attribute.
  */
 
 /**
@@ -121,13 +121,29 @@ export const attributeParsers = {
 
 		const data = attribute.data.map((line) => {
 			const [frequency, ...other] = line.split(",").map((v) => v.trim());
-			console.log({ x: `${frequency} ${unit}` });
-			// const [start, end] = frequency.split("-").map((v) => decodeFrequency(v));
-			return { frequency: decodeFrequency(`${frequency} ${unit}`) };
+			const otherData = columns.reduce((acc, column, index) => {
+				acc[column] = other[index];
+				return acc;
+			}, {});
+
+			// if other length is greater than columns length, add the rest to the last column
+			if (other.length > columns.length) {
+				otherData[columns[columns.length - 1]] = other
+					.slice(columns.length - 1)
+					.join(", ");
+			}
+
+			return {
+				frequency: decodeFrequency(`${frequency} ${unit}`),
+				formattedFrequency: `${frequency} ${unit}`,
+				...otherData,
+			};
 		});
 
 		return { ...attribute, data };
 	},
+
+	// const [start, end] = frequency.split("-").map((v) => decodeFrequency(v));
 };
 
 /**
