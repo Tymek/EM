@@ -177,18 +177,18 @@ export const bandplanPlugin = (options) => {
 			.append("rect")
 			.attr("class", "band")
 			.attr("y", 0)
-			.attr("height", height)
+			.attr("height", height);
+
+		bandsEnter
+			.merge(bands)
+			.attr("x", (d) => xScale(d.band.value[0]))
+			.attr("width", (d) => xScale(d.band.value[1]) - xScale(d.band.value[0]))
 			.attr("fill", (d) => {
 				if (d?.type?.value) {
 					return colors[d.type.value.toLowerCase()] || colors.unknown;
 				}
 				return colors.unknown;
 			});
-
-		bandsEnter
-			.merge(bands)
-			.attr("x", (d) => xScale(d.band.value[0]))
-			.attr("width", (d) => xScale(d.band.value[1]) - xScale(d.band.value[0]));
 
 		// bandsEnter
 		// 	.append("title")
