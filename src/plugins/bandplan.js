@@ -16,7 +16,7 @@ import { encodeFrequency, getDimensions } from "../utils.js";
  */
 
 const colors = {
-	amateur: "#A0522D",
+	amateur: "#D0422D",
 	civilian: "#205d4c",
 	broadcast: "#C3A4E8",
 	shipping: "#4682B4",
@@ -31,6 +31,7 @@ const colors = {
 /** @type import("../bandplanParser.js").BandplanSection[] */
 let data = [];
 let markers = [];
+let visibleData = [];
 
 async function loadData() {
 	const data = (
@@ -65,7 +66,7 @@ export const bandplanPlugin = (options) => {
 		/** @type {d3.Selection<SVGLineElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const markers = /** @type {any} */ (
 			selection.selectAll(`.${className}`).data(
-				data.filter((x) => x?.band?.value),
+				visibleData.filter((x) => x?.band?.value),
 				(d) => d,
 			)
 		);
@@ -106,7 +107,7 @@ export const bandplanPlugin = (options) => {
 		/** @type {d3.Selection<SVGTextElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const labels = /** @type {any} */ (
 			selection.selectAll(`.${className}`).data(
-				data.filter((x) => x?.band?.value),
+				visibleData.filter((x) => x?.band?.value),
 				(d) => d,
 			)
 		);
@@ -154,7 +155,7 @@ export const bandplanPlugin = (options) => {
 		if (!visible || data.length < 1) return;
 
 		const [domainStart, domainEnd] = xScale.domain();
-		const visibleData = data.filter(
+		visibleData = data.filter(
 			(d) =>
 				d?.band?.value &&
 				d.band.value[1] > domainStart &&
@@ -209,50 +210,50 @@ export const bandplanPlugin = (options) => {
 			group.selectAll(".band-label").remove();
 		}
 
-		if (k >= 100) {
-			drawBandMarkers(
-				group,
-				"band-marker-start",
-				height,
-				height + 24,
-				"white",
-				(d) => xScale(d.band.value[0]),
-			);
+		// if (k >= 100) {
+		// 	drawBandMarkers(
+		// 		group,
+		// 		"band-marker-start",
+		// 		height,
+		// 		height + 24,
+		// 		"white",
+		// 		(d) => xScale(d.band.value[0]),
+		// 	);
 
-			drawBandMarkers(
-				group,
-				"band-marker-end",
-				height,
-				height + 24,
-				"white",
-				(d) => xScale(d.band.value[1]),
-			);
+		// 	drawBandMarkers(
+		// 		group,
+		// 		"band-marker-end",
+		// 		height,
+		// 		height + 24,
+		// 		"white",
+		// 		(d) => xScale(d.band.value[1]),
+		// 	);
 
-			drawLabels(
-				group,
-				"band-marker-label-start",
-				height + 35,
-				"white",
-				(d) => xScale(d.band.value[0]),
-				(d) => `${encodeFrequency(d.band.value[0])} MHz`,
-				true,
-			);
+		// 	drawLabels(
+		// 		group,
+		// 		"band-marker-label-start",
+		// 		height + 35,
+		// 		"white",
+		// 		(d) => xScale(d.band.value[0]),
+		// 		(d) => `${encodeFrequency(d.band.value[0])} MHz`,
+		// 		true,
+		// 	);
 
-			drawLabels(
-				group,
-				"band-marker-label-end",
-				height + 35,
-				"white",
-				(d) => xScale(d.band.value[1]),
-				(d) => `${encodeFrequency(d.band.value[1])}Hz`,
-				true,
-			);
-		} else {
-			group.selectAll(".band-marker-start").remove();
-			group.selectAll(".band-marker-end").remove();
-			group.selectAll(".band-marker-label-start").remove();
-			group.selectAll(".band-marker-label-end").remove();
-		}
+		// 	drawLabels(
+		// 		group,
+		// 		"band-marker-label-end",
+		// 		height + 35,
+		// 		"white",
+		// 		(d) => xScale(d.band.value[1]),
+		// 		(d) => `${encodeFrequency(d.band.value[1])}Hz`,
+		// 		true,
+		// 	);
+		// } else {
+		// 	group.selectAll(".band-marker-start").remove();
+		// 	group.selectAll(".band-marker-end").remove();
+		// 	group.selectAll(".band-marker-label-start").remove();
+		// 	group.selectAll(".band-marker-label-end").remove();
+		// }
 
 		if (k >= 500) {
 			const visibleMarkers = markers.filter((d) => {

@@ -52,3 +52,17 @@ Lotnictwo wojskowe
 Żegluga morska i śródlądowa
   type shipping
   band 160.650 MHz - 162.025 MHz
+
+MF Broadcast
+  type broadcast
+  band 526.5 kHz - 1606.5 kHz
+
+LF Broadcast
+  type broadcast
+  mode AM
+  band 148.5 kHz - 283.5 kHz
+
+FM Broadcast
+  type broadcast
+  mode FM
+  band 87.5 MHz - 108.0 MHz
