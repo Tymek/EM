@@ -16,9 +16,16 @@ import { encodeFrequency, getDimensions } from "../utils.js";
  */
 
 const colors = {
-	amateur: "#409171",
-	civil: "#469fb1",
-	space: "#d8e8de",
+	amateur: "#A0522D",
+	civilian: "#205d4c",
+	broadcast: "#C3A4E8",
+	shipping: "#4682B4",
+	aircraft: "#87b8ef",
+	military: "#556B2F",
+	police: "#F6E8C3",
+	emergency: "#412c00",
+	space: "#CBD9E9",
+	unknown: "#606060",
 };
 
 /** @type import("../bandplanParser.js").BandplanSection[] */
@@ -31,6 +38,7 @@ async function loadData() {
 			fetch("data/IARU-1.rbp").then((response) => response.text()),
 			// fetch("data/CEPT.rbp").then((response) => response.text()),
 			fetch("data/space.rbp").then((response) => response.text()),
+			fetch("data/PL.rbp").then((response) => response.text()),
 		])
 	).map(parseBandplan);
 	return data;
@@ -42,7 +50,7 @@ async function loadData() {
 export const bandplanPlugin = (options) => {
 	const { group: selection } = options;
 
-	const group = selection.append("g").attr("class", "iaru-bands");
+	const group = selection.append("g").attr("class", "bands");
 
 	/**
 	 * Draws markers on the chart.
@@ -155,7 +163,7 @@ export const bandplanPlugin = (options) => {
 
 		/** @type {d3.Selection<SVGRectElement, import("../bandplanParser.js").BandplanSection, SVGGElement, unknown>} */
 		const bands = /** @type {any} */ (
-			group.selectAll(".iaru-band").data(
+			group.selectAll(".band").data(
 				visibleData.filter((x) => x?.band?.value),
 				(d) => d,
 			)
@@ -166,10 +174,15 @@ export const bandplanPlugin = (options) => {
 		const bandsEnter = bands
 			.enter()
 			.append("rect")
-			.attr("class", "iaru-band")
+			.attr("class", "band")
 			.attr("y", 0)
 			.attr("height", height)
-			.attr("fill", "#409171");
+			.attr("fill", (d) => {
+				if (d?.type?.value) {
+					return colors[d.type.value.toLowerCase()] || colors.unknown;
+				}
+				return colors.unknown;
+			});
 
 		bandsEnter
 			.merge(bands)
@@ -186,20 +199,20 @@ export const bandplanPlugin = (options) => {
 		if (k >= 50) {
 			drawLabels(
 				group,
-				"iaru-band-label",
+				"band-label",
 				height / 2 - 20,
 				"black",
 				(d) => (xScale(d.band.value[1]) + xScale(d.band.value[0])) / 2,
-				(d) => `${d.title.value}\nband`,
+				(d) => (d.type.value === "amateur" ? `${d.title.value}` : ""),
 			);
 		} else {
-			group.selectAll(".iaru-band-label").remove();
+			group.selectAll(".band-label").remove();
 		}
 
 		if (k >= 100) {
 			drawBandMarkers(
 				group,
-				"iaru-band-marker-start",
+				"band-marker-start",
 				height,
 				height + 24,
 				"white",
@@ -208,7 +221,7 @@ export const bandplanPlugin = (options) => {
 
 			drawBandMarkers(
 				group,
-				"iaru-band-marker-end",
+				"band-marker-end",
 				height,
 				height + 24,
 				"white",
@@ -217,7 +230,7 @@ export const bandplanPlugin = (options) => {
 
 			drawLabels(
 				group,
-				"iaru-band-marker-label-start",
+				"band-marker-label-start",
 				height + 35,
 				"white",
 				(d) => xScale(d.band.value[0]),
@@ -227,7 +240,7 @@ export const bandplanPlugin = (options) => {
 
 			drawLabels(
 				group,
-				"iaru-band-marker-label-end",
+				"band-marker-label-end",
 				height + 35,
 				"white",
 				(d) => xScale(d.band.value[1]),
@@ -235,10 +248,10 @@ export const bandplanPlugin = (options) => {
 				true,
 			);
 		} else {
-			group.selectAll(".iaru-band-marker-start").remove();
-			group.selectAll(".iaru-band-marker-end").remove();
-			group.selectAll(".iaru-band-marker-label-start").remove();
-			group.selectAll(".iaru-band-marker-label-end").remove();
+			group.selectAll(".band-marker-start").remove();
+			group.selectAll(".band-marker-end").remove();
+			group.selectAll(".band-marker-label-start").remove();
+			group.selectAll(".band-marker-label-end").remove();
 		}
 
 		if (k >= 500) {
@@ -248,13 +261,13 @@ export const bandplanPlugin = (options) => {
 			});
 
 			const markerItems = group
-				.selectAll(".iaru-band-marker-item")
+				.selectAll(".band-marker-item")
 				.data(visibleMarkers);
 
 			const markerItemsEnter = markerItems
 				.enter()
 				.append("g")
-				.attr("class", "iaru-band-marker-item");
+				.attr("class", "band-marker-item");
 
 			markerItemsEnter.append("line");
 
@@ -286,7 +299,7 @@ export const bandplanPlugin = (options) => {
 
 			markerItems.exit().remove();
 		} else {
-			group.selectAll(".iaru-band-marker-item").remove();
+			group.selectAll(".band-marker-item").remove();
 		}
 	};
 

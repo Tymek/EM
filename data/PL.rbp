@@ -1,0 +1,54 @@
+jurisdiction PL
+
+Pasmo taktyczno-wojskowe
+  type military
+  band 30.000 MHz - 33.000 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 35.025 MHz - 40.000 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 41.025 MHz - 48.000 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 52.025 MHz - 68.000 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 69.200 MHz - 69.900 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 75.200 MHz - 77.500 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 79.000 MHz - 79.700 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 85.000 MHz - 87.500 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 157.425 MHz - 157.937 MHz
+Pasmo taktyczno-wojskowe
+  type military
+  band 158.575 MHz - 158.950 MHz
+
+Radionawigacja lotnicza
+  type aircraft
+  band 74.800 MHz - 75.200 MHz
+Radionawigacja lotnicza
+  type aircraft
+  band 108.025 MHz - 117.975 MHz
+
+Lotnictwo cywilne i wojskowe
+  type aircraft
+  band 117.975 MHz - 137.000 MHz
+
+Lotnictwo wojskowe
+  type aircraft
+  band 137.000 MHz - 143.975 MHz
+Lotnictwo wojskowe
+  type aircraft
+  band 225.000 MHz - 300.000 MHz
+
+Żegluga morska i śródlądowa
+  type shipping
+  band 160.650 MHz - 162.025 MHz

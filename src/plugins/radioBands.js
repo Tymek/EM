@@ -26,6 +26,7 @@ export const radioBandsPlugin = (options) => {
 		{ name: "UHF", frequencyRange: [300e6, 3e9], color: "#ffa500" }, // 300 MHz - 3 GHz
 		{ name: "SHF", frequencyRange: [3e9, 30e9], color: "#ffb700" }, // 3 - 30 GHz
 		{ name: "EHF", frequencyRange: [30e9, 300e9], color: "#ffd700" }, // 30 - 300 GHz
+		{ name: "THF", frequencyRange: [300e9, 3e12], color: "#ffff00" }, // 300 GHz - 3 THz
 	];
 
 	/**
