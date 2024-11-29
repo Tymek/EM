@@ -22,8 +22,8 @@ const colors = {
 	shipping: "#4682B4",
 	aircraft: "#87b8ef",
 	military: "#556B2F",
-	police: "#F6E8C3",
-	emergency: "#412c00",
+	police: "#412c00",
+	emergency: "#F6E8C3",
 	space: "#CBD9E9",
 	unknown: "#606060",
 };
@@ -204,7 +204,8 @@ export const bandplanPlugin = (options) => {
 				height / 2 - 20,
 				"black",
 				(d) => (xScale(d.band.value[1]) + xScale(d.band.value[0])) / 2,
-				(d) => (d.type.value === "amateur" ? `${d.title.value}` : ""),
+				(d) => (d.type.value === "amateur" ? `${d.title.value}` : d.type.value),
+				true,
 			);
 		} else {
 			group.selectAll(".band-label").remove();

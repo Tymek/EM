@@ -30,6 +30,21 @@ Pasmo taktyczno-wojskowe
 Pasmo taktyczno-wojskowe
   type military
   band 158.575 MHz - 158.950 MHz
+Pasmo logistyki wojskowej słuzby medycznej
+  type military
+  band 169.175 MHz - 169.375 MHz    
+
+Służba zdrowia i Pogotowie Ratunkowe
+  type emergency
+  band 168.525 MHz - 169.150 MHz
+
+Państwowa Straż Pożarna
+  type emergency
+  band 148.6625 MHz - 149.3375 MHz  
+  
+Policja, PSP i inne służby
+  type police
+  band 149.350 MHz - 149.9875 MHz    
 
 Radionawigacja lotnicza
   type aircraft
